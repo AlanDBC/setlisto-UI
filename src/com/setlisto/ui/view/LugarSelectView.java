@@ -2,7 +2,6 @@ package com.setlisto.ui.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,11 +12,13 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -30,6 +31,8 @@ import com.setlisto.model.Lugar;
 import com.setlisto.model.LugarDTO;
 import com.setlisto.model.Pais;
 import com.setlisto.model.Region;
+import com.setlisto.ui.controller.AceptarLugarSeleccionadoController;
+import com.setlisto.ui.controller.CancelarLugarSeleccionadoController;
 import com.setlisto.ui.controller.LlenarCombosLugarController;
 import com.setlisto.ui.controller.LugarCreateController;
 import com.setlisto.ui.controller.LugarSearchController;
@@ -66,38 +69,29 @@ public class LugarSelectView extends JDialog {
 	private JButton crearButton;
 	private JLabel preguntaLabel;
 	private JButton limpiarButton;
-	private Component verticalStrut_1;
 	private List<LugarDTO> model;
 	private JPanel southPanel;
 	private JLabel totalResultadosLabel;
 	private Component horizontalStrut_2;
 	private Component horizontalStrut_3;
+	private JLabel lugarSeleccionadoLabel;
+	private Component verticalStrut_1;
+	private Component verticalStrut_2;
+	private JButton cancelarButton;
+	private JButton aceptarButton;
+	private Component horizontalGlue;
+	private EventoCreateView receptor;
 
-
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					LugarSelectView dialog = new LugarSelectView(null, true);
-					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-					dialog.setLocationRelativeTo(null);
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public LugarSelectView(JFrame parent, boolean modal) {
+	public LugarSelectView(JFrame parent, boolean modal, EventoCreateView receptor) {
 		super(parent, modal);
+		this.receptor = receptor;
 		initialize();
 		postInitialize();
 	}
 
 	public void initialize () {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 800, 500);
+		setBounds(100, 100, 900, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -107,9 +101,9 @@ public class LugarSelectView extends JDialog {
 		contentPane.add(searchPanel, BorderLayout.NORTH);
 		GridBagLayout gbl_searchPanel = new GridBagLayout();
 		gbl_searchPanel.columnWidths = new int[]{0, 72, 77, 83, 169, 135, 0, 0};
-		gbl_searchPanel.rowHeights = new int[]{28, 0, 17, 20, 0, 0, 0, 0, 0};
+		gbl_searchPanel.rowHeights = new int[]{28, 0, 17, 20, 0, 0, 0, 0, 0, 0, 0};
 		gbl_searchPanel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_searchPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_searchPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		searchPanel.setLayout(gbl_searchPanel);
 
 		buscarLabel = new JLabel("Busqueda de Lugares");
@@ -252,12 +246,27 @@ public class LugarSelectView extends JDialog {
 		gbc_buscarButton.gridx = 5;
 		gbc_buscarButton.gridy = 6;
 		searchPanel.add(buscarButton, gbc_buscarButton);
-
+		
+		verticalStrut_2 = Box.createVerticalStrut(20);
+		GridBagConstraints gbc_verticalStrut_2 = new GridBagConstraints();
+		gbc_verticalStrut_2.insets = new Insets(0, 0, 5, 5);
+		gbc_verticalStrut_2.gridx = 4;
+		gbc_verticalStrut_2.gridy = 7;
+		searchPanel.add(verticalStrut_2, gbc_verticalStrut_2);
+		
+		lugarSeleccionadoLabel = new JLabel("(Sin lugar seleccionado)");
+		GridBagConstraints gbc_lugarSeleccionadoLabel = new GridBagConstraints();
+		gbc_lugarSeleccionadoLabel.gridwidth = 5;
+		gbc_lugarSeleccionadoLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_lugarSeleccionadoLabel.gridx = 1;
+		gbc_lugarSeleccionadoLabel.gridy = 8;
+		searchPanel.add(lugarSeleccionadoLabel, gbc_lugarSeleccionadoLabel);
+		
 		verticalStrut_1 = Box.createVerticalStrut(20);
 		GridBagConstraints gbc_verticalStrut_1 = new GridBagConstraints();
 		gbc_verticalStrut_1.insets = new Insets(0, 0, 0, 5);
 		gbc_verticalStrut_1.gridx = 4;
-		gbc_verticalStrut_1.gridy = 7;
+		gbc_verticalStrut_1.gridy = 9;
 		searchPanel.add(verticalStrut_1, gbc_verticalStrut_1);
 
 		tablePanel = new JPanel();
@@ -275,12 +284,22 @@ public class LugarSelectView extends JDialog {
 		scrollPane.setRowHeaderView(horizontalStrut_2);
 		
 		southPanel = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) southPanel.getLayout();
-		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(southPanel, BorderLayout.SOUTH);
+		southPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		totalResultadosLabel = new JLabel("Total de resultados: 0");
 		southPanel.add(totalResultadosLabel);
+		
+		horizontalGlue = Box.createHorizontalGlue();
+		southPanel.add(horizontalGlue);
+		
+		cancelarButton = new JButton("Cancelar");
+		cancelarButton.setIcon(new ImageIcon(LugarSelectView.class.getResource("/nuvola/16x16/1250_delete_delete.png")));
+		southPanel.add(cancelarButton);
+		
+		aceptarButton = new JButton("Aceptar");
+		aceptarButton.setIcon(new ImageIcon(LugarSelectView.class.getResource("/nuvola/16x16/1710_ok_yes_accept_green_ok_green_accept_yes.png")));
+		southPanel.add(aceptarButton);
 		
 		horizontalStrut_3 = Box.createHorizontalStrut(20);
 		contentPane.add(horizontalStrut_3, BorderLayout.EAST);
@@ -306,15 +325,22 @@ public class LugarSelectView extends JDialog {
 	private void setAllControllers() {
 		LlenarCombosLugarController llenarCombosController = new LlenarCombosLugarController(this);
 
-		LugarSearchController searchController = new LugarSearchController(this);
+		LugarSearchController searchController = new LugarSearchController(this, this.receptor);
 		buscarButton.setAction(searchController);
+		crearButton.setAction(new LugarCreateController(this));
+		aceptarButton.setAction(new AceptarLugarSeleccionadoController(this, this.receptor));
+		cancelarButton.setAction(new CancelarLugarSeleccionadoController(this, this.receptor));
+		
 		paisCB.setAction(searchController);
 		regionCB.setAction(searchController);
 		ciudadCB.setAction(searchController);
-		nombreTF.addActionListener(searchController);
-		direccionTF.addActionListener(searchController);
 		
-		crearButton.setAction(new LugarCreateController(this)); 
+		nombreTF.setAction(searchController);
+		direccionTF.setAction(searchController);
+		
+		resultadosTable.addMouseListener(searchController);
+		
+		 
 
 	}
 
@@ -405,5 +431,45 @@ public class LugarSelectView extends JDialog {
 		}
 		
 		return lugar;
+	}
+	
+	// para traer el lugar seleccionado desde el controlador (LugarCreateController o el lugar seleccionado de la tabla).
+	public void setLugarSeleccionado(LugarDTO lugar) {
+		this.lugarSeleccionado = lugar;
+		setLabelSeleccionado();
+	}
+	
+	// desde aqui cambiamos el texto de una label que muestre el lugar seleccionado, para que el usuario sepa que se ha seleccionado correctamente.
+	public void setLabelSeleccionado () {
+		if (lugarSeleccionado != null) {
+			lugarSeleccionadoLabel.setText("Lugar seleccionado: " + lugarSeleccionado.getNombre() + ", " + lugarSeleccionado.getDireccion());
+		} else {
+			lugarSeleccionadoLabel.setText("(Sin lugar seleccionado)");
+		}
+	}
+	
+	public JTable getTabla() {
+		return resultadosTable;
+	}
+	
+	public LugarDTO getLugarAt(int row) {
+        if (model != null && row >= 0 && row < model.size()) {
+            return model.get(row);
+        }
+        return null;
+    }
+	
+	public void cancelarSeleccion() {
+		this.lugarSeleccionado = null;
+		this.dispose();
+	}
+	
+	public void aceptarSeleccion() {
+		if (lugarSeleccionado != null) {
+			this.dispose();
+		} else {
+			// Aquí podrías mostrar un mensaje de error al usuario indicando que debe seleccionar un lugar antes de aceptar.
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione un lugar antes de aceptar.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 }

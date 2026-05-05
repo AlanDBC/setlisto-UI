@@ -32,6 +32,7 @@ import org.jdesktop.swingx.JXList;
 
 import com.setlisto.model.EventoMusical;
 import com.setlisto.model.EventoMusicalDTO;
+import com.setlisto.model.LugarDTO;
 import com.setlisto.model.Organizador;
 import com.setlisto.model.SubTipoEventoDTO;
 import com.setlisto.model.ZonaHoraria;
@@ -123,6 +124,7 @@ public class EventoCreateView extends AbstractView {
 	private JFormattedTextField capacidadFTF;
 	private JLabel capacidadLabel;
 	private JButton configPlazasButton;
+	private LugarDTO lugarSeleccionado; // Para almacenar el lugar elegido desde LugarSelectView
 
 	/**
 	 * Create the panel.
@@ -561,7 +563,10 @@ public class EventoCreateView extends AbstractView {
 			em.setIdOrganizador(org.getId());
 		}
 		
-		// 3. TODO hacer getLugar al seleccionado en LugarSelectView
+		LugarDTO lugSelect = getLugarSeleccionado();
+		if (lugSelect != null && lugSelect.getId() != null) {
+			em.setIdLugar(lugSelect.getId());
+		}
 		
 		// 4. Capacidad y Subtipo (Seguro)
 		String capText = capacidadFTF.getText().trim();
@@ -620,6 +625,7 @@ public class EventoCreateView extends AbstractView {
 		crearButton.setAction(new EventoCreateController(this));
 		cancelarButton.setAction(new CancelarController(this));
 		elegirLugarButton.setAction(new AbrirLugarSelectController(this));
+		
 	}
 	// TODO terminar validacion para todos los componentes
 	private boolean validarCampos() {
@@ -670,5 +676,22 @@ public class EventoCreateView extends AbstractView {
 	
 	public JLabel getLugarSeleccionadoLabel() {
 		return lugarSeleccionadoLabel;
+	}
+	
+	public void setLugarSeleccionado(LugarDTO lugar) {
+		this.lugarSeleccionado = lugar;
+		setLabelSeleccionado();
+	}
+	
+	public void setLabelSeleccionado() {
+		if (lugarSeleccionado != null) {
+			lugarSeleccionadoLabel.setText(lugarSeleccionado.getNombre());
+		} else {
+			lugarSeleccionadoLabel.setText("(sin lugar seleccionado)");
+		}
+	}
+	
+	public LugarDTO getLugarSeleccionado() {
+		return lugarSeleccionado;
 	}
 }

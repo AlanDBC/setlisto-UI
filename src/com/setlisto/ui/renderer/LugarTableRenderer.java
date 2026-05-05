@@ -22,7 +22,7 @@ public class LugarTableRenderer implements TableCellRenderer{
 			switch (column) {
 			case 0: label.setText(l.getId().toString()); break;
 			case 1: label.setText(l.getNombre()); break;
-			case 2: label.setText(l.getNombre()); break;
+			case 2: label.setText(l.getDireccion()); break;
 			case 3: label.setText(l.getCiudadNombre()); break;
 			default: label.setText("N/A");
 			}

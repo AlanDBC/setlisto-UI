@@ -3,6 +3,8 @@ package com.setlisto.ui.controller;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ImageIcon;
+
 import com.setlisto.model.LugarDTO;
 import com.setlisto.ui.main.MainWindow;
 import com.setlisto.ui.view.EventoCreateView;
@@ -13,6 +15,7 @@ public class AbrirLugarSelectController extends AbstractController implements Ac
 	private EventoCreateView view;
 	
 	public AbrirLugarSelectController(EventoCreateView view) {
+		super("Buscar", new ImageIcon(EventoCreateView.class.getResource("/nuvola/16x16/1339_kmag_kmag.png")));
 		this.view = view;
 	}
 
@@ -23,16 +26,9 @@ public class AbrirLugarSelectController extends AbstractController implements Ac
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-        LugarSelectView dialog = new LugarSelectView(MainWindow.getInstance(), true);
-        
-        dialog.setLocationRelativeTo(view);
-        dialog.setVisible(true); 
-        
-        LugarDTO lugar = dialog.getLugarSeleccionado();
-        
-        if (lugar != null) {
-            view.getLugarSeleccionadoLabel().setText(lugar.getNombre());
-        }	
+        LugarSelectView dialog = new LugarSelectView(null, true, this.view);
+        dialog.setLocationRelativeTo(this.view);
+        dialog.setVisible(true);	
 	}
 	
 	
