@@ -67,6 +67,8 @@ import com.setlisto.ui.renderer.TipoEventoCBRenderer;
 import com.setlisto.ui.renderer.ZonaHorariaCBRenderer;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
+
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 
 public class AdminEventoSearchView extends AbstractView {
@@ -115,6 +117,10 @@ public class AdminEventoSearchView extends AbstractView {
 	private Component verticalStrut;
 	private Component verticalStrut_1;
 	private Component horizontalStrut_1;
+	private JPanel tableRightPanel;
+	private JPanel leftTablePanel;
+	private Component horizontalStrut_2;
+	private Component horizontalStrut_3;
 
 	/**
 	 * Create the panel.
@@ -542,9 +548,23 @@ public class AdminEventoSearchView extends AbstractView {
 		centerPanel.setLayout(new BorderLayout(0, 0));
 		
 		resultadosTable = new JTable();
+		resultadosTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
 		JScrollPane scrollPane = new JScrollPane(resultadosTable);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		centerPanel.add(scrollPane);
+		
+		tableRightPanel = new JPanel();
+		centerPanel.add(tableRightPanel, BorderLayout.WEST);
+		
+		horizontalStrut_2 = Box.createHorizontalStrut(20);
+		tableRightPanel.add(horizontalStrut_2);
+		
+		leftTablePanel = new JPanel();
+		centerPanel.add(leftTablePanel, BorderLayout.EAST);
+		
+		horizontalStrut_3 = Box.createHorizontalStrut(20);
+		leftTablePanel.add(horizontalStrut_3);
 
 		JPanel footerPanel = new JPanel();
 		FlowLayout fl_footerPanel = (FlowLayout) footerPanel.getLayout();
@@ -686,75 +706,6 @@ public class AdminEventoSearchView extends AbstractView {
 		resultadosTable.setModel(tableModel);
 		totalResultadosLabel.setText("Total de resultados: " + model.size());
 	}
-	/*
-	public void llenarCB () {
-		List<Pais> paises = paisService.findAll();
-		DefaultComboBoxModel<Pais> paisModel = new DefaultComboBoxModel<>();
-		Pais placeholderPais = new Pais();
-		placeholderPais.setId(null);
-		placeholderPais.setNombre("Seleccionar");
-		paisModel.addElement(placeholderPais);
-		if (paises != null) {
-			for (Pais pais : paises) {
-				paisModel.addElement(pais);
-			}
-		}
-		paisCB.setModel(paisModel);
-
-		List<GeneroMusical> generos = generoMusicalService.findAll();
-		DefaultComboBoxModel<GeneroMusical> generoModel = new DefaultComboBoxModel<>();
-		GeneroMusical placeholderGenero = new GeneroMusical();
-		placeholderGenero.setId(null);
-		placeholderGenero.setNombre("Seleccionar");
-		generoModel.addElement(placeholderGenero);
-		if (generos != null) {
-			for (GeneroMusical genero : generos) {
-				generoModel.addElement(genero);
-			}
-		}
-		generoCB.setModel(generoModel);
-
-		List<TipoEvento> tiposEvento = tipoEventoService.findAll(); 
-		DefaultComboBoxModel<TipoEvento> tipoEventoModel = new DefaultComboBoxModel<>();
-		TipoEvento placeholderTipoEvento = new TipoEvento();
-		placeholderTipoEvento.setId(null);
-		placeholderTipoEvento.setNombre("Seleccionar");
-		tipoEventoModel.addElement(placeholderTipoEvento);
-		if (tiposEvento != null) {
-			for (TipoEvento tipo : tiposEvento) {
-				tipoEventoModel.addElement(tipo);
-			}
-		}
-		tipoEventoCB.setModel(tipoEventoModel);
-
-		List<EstadoEvento> estados = estadoEventoService.findAll();
-		DefaultComboBoxModel<EstadoEvento> estadoModel = new DefaultComboBoxModel<>();
-		EstadoEvento placeholderEstado = new EstadoEvento();
-		placeholderEstado.setId(null);
-		placeholderEstado.setNombre("Seleccionar");
-		estadoModel.addElement(placeholderEstado);	
-		if (estados != null) {
-			for (EstadoEvento estado : estados) {
-				estadoModel.addElement(estado);
-			}
-		}
-		estadoCB.setModel(estadoModel);
-		
-		List<ZonaHoraria> zonas = zonaHorariaService.getAll();
-		DefaultComboBoxModel<ZonaHoraria> zonaHorariaModel = new DefaultComboBoxModel<>();
-		ZonaHoraria placeholderZona = new ZonaHoraria();
-		placeholderZona.setId(null);
-		placeholderZona.setNombre("Seleccionar");
-		zonaHorariaModel.addElement(placeholderZona);
-		if (zonas != null) {
-			for (ZonaHoraria zona : zonas) {
-				zonaHorariaModel.addElement(zona);
-			}
-		}
-		zonaHorariaCB.setModel(zonaHorariaModel);
-	
-	}
-	*/
 	
 	public void setDocumentFilters() {
 		((AbstractDocument) idEventoFTF.getDocument()).setDocumentFilter(new SoloNumerosDF());

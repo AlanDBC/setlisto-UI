@@ -28,44 +28,31 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 
-import org.jdesktop.swingx.JXList;
-
-import com.setlisto.model.EventoMusical;
+import com.setlisto.mapper.EventoMusicalMapper;
+import com.setlisto.model.Artista;
 import com.setlisto.model.EventoMusicalDTO;
+import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.LugarDTO;
 import com.setlisto.model.Organizador;
+import com.setlisto.model.SubGeneroMusical;
+import com.setlisto.model.SubGeneroMusicalDTO;
 import com.setlisto.model.SubTipoEventoDTO;
 import com.setlisto.model.ZonaHoraria;
-import com.setlisto.service.CiudadService;
-import com.setlisto.service.GeneroMusicalService;
-import com.setlisto.service.LugarService;
-import com.setlisto.service.OrganizadorService;
-import com.setlisto.service.PaisService;
-import com.setlisto.service.RegionService;
 import com.setlisto.service.SubGeneroMusicalService;
-import com.setlisto.service.SubTipoEventoService;
-import com.setlisto.service.TipoEventoService;
-import com.setlisto.service.ZonaHorariaService;
-import com.setlisto.service.impl.CiudadServiceImpl;
-import com.setlisto.service.impl.EventoMusicalServiceImpl;
-import com.setlisto.service.impl.GeneroMusicalServiceImpl;
-import com.setlisto.service.impl.LugarServiceImpl;
-import com.setlisto.service.impl.OrganizadorServiceImpl;
-import com.setlisto.service.impl.PaisServiceImpl;
-import com.setlisto.service.impl.RegionServiceImpl;
 import com.setlisto.service.impl.SubGeneroMusicalServiceImpl;
-import com.setlisto.service.impl.SubTipoEventoServiceImpl;
-import com.setlisto.service.impl.TipoEventoServiceImpl;
-import com.setlisto.service.impl.ZonaHorariaServiceImpl;
 import com.setlisto.ui.controller.AbrirLugarSelectController;
 import com.setlisto.ui.controller.CancelarController;
 import com.setlisto.ui.controller.EventoCreateController;
+import com.setlisto.ui.controller.ListaSeleccionableController;
 import com.setlisto.ui.controller.LlenarCombosCreateController;
+import com.setlisto.ui.controller.RelacionGeneroSubgeneroController;
 import com.setlisto.ui.filters.HorasDF;
 import com.setlisto.ui.renderer.OrganizadorCBRenderer;
 import com.setlisto.ui.renderer.SubtipoEventoCBRenderer;
 import com.setlisto.ui.renderer.TipoEventoCBRenderer;
 import com.setlisto.ui.renderer.ZonaHorariaCBRenderer;
+import com.setlisto.ui.selectable.ItemSeleccionable;
+import com.setlisto.ui.selectable.ListSeleccionableModel;
 import com.toedter.calendar.JDateChooser;
 
 /* TODO: Implementar JOptionPane para mostrar mensajes de error si la creacion del evento 
@@ -75,28 +62,16 @@ public class EventoCreateView extends AbstractView {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField nombreTF;
-	private TipoEventoService tipoEventoService;
-	private GeneroMusicalService generoMusicalService;
-	private PaisService paisService;
-	private RegionService regionService;
-	private CiudadService ciudadService;
-	private SubGeneroMusicalService subGeneroMusicalService;
-	private SubTipoEventoService subTipoEventoService;
-	private OrganizadorService organizadorService;
-	private LugarService lugarService;
-	private EventoMusicalServiceImpl eventoMusicalService;
 	private JDateChooser fechaInicioDC;
 	private JTextArea descripcionTA;
 	private JTextArea ubicacionTA;
 	private JTextArea entradasTA;
-	private List<EventoMusicalDTO> model;
 	private JButton crearButton;
 	private JDateChooser fechaFinDC;
 	private JFormattedTextField horaInicioFTF;
 	private JFormattedTextField horaFinFTF;
 	private JLabel zonaHorariaLabel;
 	private JComboBox zonaHorariaCB;
-	private ZonaHorariaService zonaHorariaService;
 	private JButton limpiarButton;
 	private final Border BORDE_ERROR = BorderFactory.createLineBorder(Color.RED, 1);
 	private final Border BORDE_OK = new JTextField().getBorder(); // El borde estándar de Swing
@@ -109,28 +84,37 @@ public class EventoCreateView extends AbstractView {
 	private JComboBox generoCB;
 	private JLabel subgenerosLabel;
 	private JComboBox subgeneroCB;
-	private JList generosList;
-	private JList subgenerosList;
 	private JLabel lblNewLabel;
 	private JComboBox tipoCB;
 	private JLabel subtipoLabel;
 	private JComboBox subtipoCB;
 	private JLabel organizadorLabel;
 	private JComboBox organizadorCB;
-	private JXList artistasList;
 	private JLabel artistasLabel;
 	private JButton elegirLugarButton;
 	private JLabel lugarSeleccionadoLabel;
 	private JFormattedTextField capacidadFTF;
 	private JLabel capacidadLabel;
 	private JButton configPlazasButton;
+	
+	
+	private JList<ItemSeleccionable<SubGeneroMusical>> subgenerosList;
+	private JList<ItemSeleccionable<GeneroMusical>> generosList;
+	private JList<ItemSeleccionable<Artista>> artistasList;
 	private LugarDTO lugarSeleccionado; // Para almacenar el lugar elegido desde LugarSelectView
+	private List<EventoMusicalDTO> model;
+	private ListSeleccionableModel<GeneroMusical> generosModel;
+	private ListSeleccionableModel<SubGeneroMusical> subgenerosModel;
+	private ListSeleccionableModel<Artista> artistasModel;
+	private EventoMusicalMapper mapper;
+	private RelacionGeneroSubgeneroController relacionGeneroSubgeneroController;
+	private SubGeneroMusicalService subgeneroService;
+	
 
 	/**
 	 * Create the panel.
 	 */
 	public EventoCreateView() {
-		initServices();
 		initialize();
 		postInitialize();
 		setName("Crear Evento Musical");
@@ -139,9 +123,9 @@ public class EventoCreateView extends AbstractView {
 	public void initialize() {
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { -82, 95, 95, 95, 0, 116, 0, 0, 0, 0 };
-		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 31, 0, 0, 38, 31, 19, 0, 26, 28, 0, 0 };
+		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 44, 0, 0, 38, 31, 19, 0, 26, 28, 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0,
 				Double.MIN_VALUE };
 		setLayout(gridBagLayout);
 		
@@ -286,7 +270,7 @@ public class EventoCreateView extends AbstractView {
 		gbc_subgenerosList.gridy = 5;
 		add(subgenerosList, gbc_subgenerosList);
 		
-		artistasList = new JXList();
+		artistasList = new JList();
 		GridBagConstraints gbc_artistasList = new GridBagConstraints();
 		gbc_artistasList.insets = new Insets(0, 0, 5, 5);
 		gbc_artistasList.fill = GridBagConstraints.BOTH;
@@ -493,23 +477,11 @@ public class EventoCreateView extends AbstractView {
 
 		setAllRenderers();
 
-		//		llenarCB();
+		setAllControllers();		
+		
+		mapper = new EventoMusicalMapper();
+		subgeneroService = new SubGeneroMusicalServiceImpl();
 
-		setAllControllers();
-	}
-
-	private void initServices() {
-		tipoEventoService = new TipoEventoServiceImpl();
-		generoMusicalService = new GeneroMusicalServiceImpl();
-		paisService = new PaisServiceImpl();
-		regionService = new RegionServiceImpl();
-		ciudadService = new CiudadServiceImpl();
-		subGeneroMusicalService = new SubGeneroMusicalServiceImpl();
-		subTipoEventoService = new SubTipoEventoServiceImpl();
-		organizadorService = new OrganizadorServiceImpl();
-		lugarService = new LugarServiceImpl();
-		eventoMusicalService = new EventoMusicalServiceImpl();
-		zonaHorariaService = new ZonaHorariaServiceImpl();
 	}
 
 	public void limpiarCampos() {
@@ -546,48 +518,51 @@ public class EventoCreateView extends AbstractView {
 		organizadorCB.setBorder(BORDE_OK);
 	}
 
-	public EventoMusical getEvento() {
-		if (!validarCampos()) {
-			return null; // No seguimos con la creación
-		}
+	public EventoMusicalDTO getEvento() {
+	    if (!validarCampos()) {
+	        return null; // No seguimos con la creación
+	    }
 
-		EventoMusical em = new EventoMusical();
-		// 1. Datos básicos
-		em.setNombre(nombreTF.getText().trim());
-		em.setDescripcion(descripcionTA.getText().trim());
-		em.setFechaInicio(combinarFechaHora(fechaInicioDC, horaInicioFTF));
-		em.setFechaFin(combinarFechaHora(fechaFinDC, horaFinFTF));
-		// 2. Validación de Organizador (Seguro)
-		Organizador org = (Organizador) organizadorCB.getSelectedItem();
-		if (org != null && org.getId() != null) {
-			em.setIdOrganizador(org.getId());
-		}
-		
-		LugarDTO lugSelect = getLugarSeleccionado();
-		if (lugSelect != null && lugSelect.getId() != null) {
-			em.setIdLugar(lugSelect.getId());
-		}
-		
-		// 4. Capacidad y Subtipo (Seguro)
-		String capText = capacidadFTF.getText().trim();
-		em.setCapacidad(capText.isEmpty() ? null : Integer.parseInt(capText));
+	    EventoMusicalDTO em = new EventoMusicalDTO();
+	    
+	    // 1. Datos básicos
+	    em.setNombre(nombreTF.getText().trim());
+	    em.setDescripcion(descripcionTA.getText().trim());
+	    em.setFechaInicio(combinarFechaHora(fechaInicioDC, horaInicioFTF));
+	    em.setFechaFin(combinarFechaHora(fechaFinDC, horaFinFTF));
+	    
+	    // 2. Validación de Organizador
+	    Organizador org = (Organizador) organizadorCB.getSelectedItem();
+	    if (org != null && org.getId() != null) {
+	        em.setIdOrganizador(org.getId());
+	    }
+	    
+	    // 3. Lugar
+	    LugarDTO lugSelect = getLugarSeleccionado();
+	    if (lugSelect != null && lugSelect.getId() != null) {
+	        em.setIdLugar(lugSelect.getId());
+	    }
+	    
+	    // 4. Capacidad y Subtipo
+	    String capText = capacidadFTF.getText().trim();
+	    em.setCapacidad(capText.isEmpty() ? null : Integer.parseInt(capText));
 
-		SubTipoEventoDTO sub = (SubTipoEventoDTO) subtipoCB.getSelectedItem();
-		if (sub != null && sub.getId() != null) {
-			em.setIdSubtipo(sub.getId());
-		}
-		// 5. Zona Horaria (Seguro)
-		ZonaHoraria zh = (ZonaHoraria) zonaHorariaCB.getSelectedItem();
-		if (zh != null && zh.getId() != null) {
-			em.setIdZonaHoraria(zh.getId());
-		}
-		// 6. ¡Guardado final!
-		// Solo si el lugar se creó correctamente (puedes añadir un if aquí)
-		if (em.getIdLugar() == null) {
-			System.out.println("Error: No se puede crear el evento sin un lugar válido.");
-			return null;
-		}
-		return eventoMusicalService.create(em);
+	    SubTipoEventoDTO sub = (SubTipoEventoDTO) subtipoCB.getSelectedItem();
+	    if (sub != null && sub.getId() != null) {
+	        em.setIdSubtipo(sub.getId());
+	    }
+	    
+	    // 5. Zona Horaria
+	    ZonaHoraria zh = (ZonaHoraria) zonaHorariaCB.getSelectedItem();
+	    if (zh != null && zh.getId() != null) {
+	        em.setIdZonaHoraria(zh.getId());
+	    }
+	    
+	    // 6. Sincronización de listas (UI -> DTO) usando el Mapper
+	    // El mapper encapsula la extracción y asignación de Géneros, Subgéneros y Artistas
+	    mapper.mapUItoDTO(em, generosModel, subgenerosModel, artistasModel);
+
+	    return em;
 	}
 
 	/**
@@ -614,17 +589,28 @@ public class EventoCreateView extends AbstractView {
 		organizadorCB.setRenderer(new OrganizadorCBRenderer());
 		tipoCB.setRenderer(new TipoEventoCBRenderer());
 		subtipoCB.setRenderer(new SubtipoEventoCBRenderer());
-		
-		
 	}
 
 	private void setAllControllers() {
+		// Instancias el controlador de relación (que gestiona la lógica entre las dos listas)
+		List<SubGeneroMusicalDTO> subgeneros = subgeneroService.findAll();
+		relacionGeneroSubgeneroController = new RelacionGeneroSubgeneroController(generosModel, subgenerosModel, subgeneros);
+		
+		// Conecta la lista de géneros con su controlador y le pasa el de relación
+		ListaSeleccionableController<GeneroMusical> listaGenerosController = new ListaSeleccionableController<GeneroMusical>(generosList, generosModel, relacionGeneroSubgeneroController);
+		
+		// Conectas la lista de subgéneros (esta no suele necesitar el controlador de relación como parámetro)
+		ListaSeleccionableController<SubGeneroMusical> listaSubgenerosController = new ListaSeleccionableController<SubGeneroMusical>(subgenerosList, subgenerosModel, null);
+		
+		
 		// Llenado de comboboxes con controller
 		LlenarCombosCreateController llenado = new LlenarCombosCreateController(this);
-
+		
 		crearButton.setAction(new EventoCreateController(this));
 		cancelarButton.setAction(new CancelarController(this));
 		elegirLugarButton.setAction(new AbrirLugarSelectController(this));
+		
+		
 		
 	}
 	// TODO terminar validacion para todos los componentes
@@ -693,5 +679,20 @@ public class EventoCreateView extends AbstractView {
 	
 	public LugarDTO getLugarSeleccionado() {
 		return lugarSeleccionado;
+	}
+	
+	public void setGenerosListModel(ListSeleccionableModel<GeneroMusical> model) {
+		this.generosModel = model;
+		generosList.setModel(model);
+	}
+	
+	public void setSubgenerosListModel(ListSeleccionableModel<SubGeneroMusical> model) {
+		this.subgenerosModel = model;
+		subgenerosList.setModel(model);
+	}
+	
+	public void setArtistasListModel(ListSeleccionableModel<Artista> model) {
+		this.artistasModel = model;
+		artistasList.setModel(model);
 	}
 }
