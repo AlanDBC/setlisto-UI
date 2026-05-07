@@ -11,86 +11,91 @@ import javax.swing.DefaultListModel;
  */
 public class ListSeleccionableModel<T> extends DefaultListModel<ItemSeleccionable<T>> {
 
-    /**
-     * Carga los datos iniciales en el modelo
-     */
-    public void cargarItems(List<T> datos) {
-        clear();
-        for (T dato : datos) {
-            addElement(new ItemSeleccionable<>(dato));
-        }
-    }
+	/**
+	 * Carga los datos iniciales en el modelo
+	 */
+	public void cargarItems(List<T> datos) {
+	    clear();
 
-    /**
-     * Marca un item como seleccionado
-     */
-    public void marcarItem(T valor) {
-        for (int i = 0; i < getSize(); i++) {
-            ItemSeleccionable<T> item = getElementAt(i);
-            if (item.getValor().equals(valor)) {
-                item.setSeleccionado(true);
-                // Notifica a la vista que este elemento cambió
-                fireContentsChanged(this, i, i);
-                break;
-            }
-        }
-    }
+	    if (datos == null) {
+	        return;
+	    }
 
-    /**
-     * Desmarca un item
-     */
-    public void desmarcarItem(T valor) {
-        for (int i = 0; i < getSize(); i++) {
-            ItemSeleccionable<T> item = getElementAt(i);
-            if (item.getValor().equals(valor)) {
-                item.setSeleccionado(false);
-                fireContentsChanged(this, i, i);
-                break;
-            }
-        }
-    }
+	    for (T dato : datos) {
+	        addElement(new ItemSeleccionable<>(dato));
+	    }
+	}
 
-    /**
-     * Alterna el estado (toggle)
-     */
-    public void toggleItem(int index) {
-        ItemSeleccionable<T> item = getElementAt(index);
-        item.setSeleccionado(!item.isSeleccionado());
-        fireContentsChanged(this, index, index);
-    }
+	/**
+	 * Marca un item como seleccionado
+	 */
+	public void marcarItem(T valor) {
+		for (int i = 0; i < getSize(); i++) {
+			ItemSeleccionable<T> item = getElementAt(i);
+			if (item.getValor().equals(valor)) {
+				item.setSeleccionado(true);
+				// Notifica a la vista que este elemento cambió
+				fireContentsChanged(this, i, i);
+				break;
+			}
+		}
+	}
 
-    /**
-     * Obtiene solo los elementos seleccionados
-     */
-    public List<T> getSeleccionados() {
-        List<T> seleccionados = new ArrayList<>();
-        for (int i = 0; i < getSize(); i++) {
-            ItemSeleccionable<T> item = getElementAt(i);
-            if (item.isSeleccionado()) {
-                seleccionados.add(item.getValor());
-            }
-        }
-        return seleccionados;
-    }
+	/**
+	 * Desmarca un item
+	 */
+	public void desmarcarItem(T valor) {
+		for (int i = 0; i < getSize(); i++) {
+			ItemSeleccionable<T> item = getElementAt(i);
+			if (item.getValor().equals(valor)) {
+				item.setSeleccionado(false);
+				fireContentsChanged(this, i, i);
+				break;
+			}
+		}
+	}
 
-    /**
-     * Resetea todos los items (los desmarca)
-     */
-    public void resetear() {
-        for (int i = 0; i < getSize(); i++) {
-            ItemSeleccionable<T> item = getElementAt(i);
-            item.setSeleccionado(false);
-        }
-        // Notifica cambio global
-        if (getSize() > 0) {
-            fireContentsChanged(this, 0, getSize() - 1);
-        }
-    }
+	/**
+	 * Alterna el estado (toggle)
+	 */
+	public void toggleItem(int index) {
+		ItemSeleccionable<T> item = getElementAt(index);
+		item.setSeleccionado(!item.isSeleccionado());
+		fireContentsChanged(this, index, index);
+	}
 
-    /**
-     * Obtener item por índice
-     */
-    public ItemSeleccionable<T> getItem(int index) {
-        return getElementAt(index);
-    }
+	/**
+	 * Obtiene solo los elementos seleccionados
+	 */
+	public List<T> getSeleccionados() {
+		List<T> seleccionados = new ArrayList<>();
+		for (int i = 0; i < getSize(); i++) {
+			ItemSeleccionable<T> item = getElementAt(i);
+			if (item.isSeleccionado()) {
+				seleccionados.add(item.getValor());
+			}
+		}
+		return seleccionados;
+	}
+
+	/**
+	 * Resetea todos los items (los desmarca)
+	 */
+	public void resetear() {
+		for (int i = 0; i < getSize(); i++) {
+			ItemSeleccionable<T> item = getElementAt(i);
+			item.setSeleccionado(false);
+		}
+		// Notifica cambio global
+		if (getSize() > 0) {
+			fireContentsChanged(this, 0, getSize() - 1);
+		}
+	}
+
+	/**
+	 * Obtener item por índice
+	 */
+	public ItemSeleccionable<T> getItem(int index) {
+		return getElementAt(index);
+	}
 }
