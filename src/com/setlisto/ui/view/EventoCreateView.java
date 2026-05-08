@@ -38,7 +38,6 @@ import com.setlisto.model.Organizador;
 import com.setlisto.model.SubGeneroMusical;
 import com.setlisto.model.SubGeneroMusicalDTO;
 import com.setlisto.model.SubTipoEventoDTO;
-import com.setlisto.model.ZonaHoraria;
 import com.setlisto.service.SubGeneroMusicalService;
 import com.setlisto.service.impl.SubGeneroMusicalServiceImpl;
 import com.setlisto.ui.controller.AbrirLugarSelectController;
@@ -53,7 +52,6 @@ import com.setlisto.ui.renderer.ItemSeleccionableRenderer;
 import com.setlisto.ui.renderer.OrganizadorCBRenderer;
 import com.setlisto.ui.renderer.SubtipoEventoCBRenderer;
 import com.setlisto.ui.renderer.TipoEventoCBRenderer;
-import com.setlisto.ui.renderer.ZonaHorariaCBRenderer;
 import com.setlisto.ui.selectable.ItemSeleccionable;
 import com.setlisto.ui.selectable.ListSeleccionableModel;
 import com.toedter.calendar.JDateChooser;
@@ -77,7 +75,7 @@ public class EventoCreateView extends AbstractView {
 	private JFormattedTextField horaInicioFTF;
 	private JFormattedTextField horaFinFTF;
 	private JLabel zonaHorariaLabel;
-	private JComboBox zonaHorariaCB;
+	private JLabel zonaHorariaSeleccionadaLabel;
 	private JButton limpiarButton;
 
 	private JButton cancelarButton;
@@ -400,13 +398,12 @@ public class EventoCreateView extends AbstractView {
 		gbc_horaInicioFTF.gridy = 8;
 		add(horaInicioFTF, gbc_horaInicioFTF);
 
-		zonaHorariaCB = new JComboBox();
-		GridBagConstraints gbc_zonaHorariaCB = new GridBagConstraints();
-		gbc_zonaHorariaCB.insets = new Insets(0, 0, 5, 5);
-		gbc_zonaHorariaCB.fill = GridBagConstraints.HORIZONTAL;
-		gbc_zonaHorariaCB.gridx = 6;
-		gbc_zonaHorariaCB.gridy = 8;
-		add(zonaHorariaCB, gbc_zonaHorariaCB);
+		zonaHorariaSeleccionadaLabel = new JLabel("(se define al elegir lugar)");
+		GridBagConstraints gbc_zonaHorariaSeleccionadaLabel = new GridBagConstraints();
+		gbc_zonaHorariaSeleccionadaLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_zonaHorariaSeleccionadaLabel.gridx = 6;
+		gbc_zonaHorariaSeleccionadaLabel.gridy = 8;
+		add(zonaHorariaSeleccionadaLabel, gbc_zonaHorariaSeleccionadaLabel);
 		
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
 		GridBagConstraints gbc_horizontalStrut_2 = new GridBagConstraints();
@@ -528,10 +525,6 @@ public class EventoCreateView extends AbstractView {
 		tipoCB.setSelectedIndex(0);
 		organizadorCB.setSelectedIndex(0);
 
-		if (zonaHorariaCB.getItemCount() > 0) {
-			zonaHorariaCB.setSelectedIndex(0);
-		}
-
 		// Combos Dependientes (Estos sí se limpian porque dependen de los de arriba)
 		subtipoCB.setModel(new DefaultComboBoxModel<>());
 
@@ -597,10 +590,9 @@ public class EventoCreateView extends AbstractView {
 			em.setIdSubtipo(sub.getId());
 		}
 
-		// 5. Zona Horaria
-		ZonaHoraria zh = (ZonaHoraria) zonaHorariaCB.getSelectedItem();
-		if (zh != null && zh.getId() != null) {
-			em.setIdZonaHoraria(zh.getId());
+		// 5. Zona Horaria: se deriva del lugar seleccionado.
+		if (lugSelect != null && lugSelect.getIdZonaHoraria() != null) {
+			em.setIdZonaHoraria(lugSelect.getIdZonaHoraria());
 		}
 
 		// 6. Sincronización de listas (UI -> DTO) usando el Mapper
@@ -630,7 +622,6 @@ public class EventoCreateView extends AbstractView {
 	}
 
 	private void setAllRenderers() {
-		zonaHorariaCB.setRenderer(new ZonaHorariaCBRenderer());
 		organizadorCB.setRenderer(new OrganizadorCBRenderer());
 		tipoCB.setRenderer(new TipoEventoCBRenderer());
 		subtipoCB.setRenderer(new SubtipoEventoCBRenderer());
@@ -683,6 +674,15 @@ public class EventoCreateView extends AbstractView {
 			organizadorCB.setBorder(BORDE_OK);
 		}
 
+		if (lugarSeleccionado == null || lugarSeleccionado.getId() == null || lugarSeleccionado.getIdZonaHoraria() == null) {
+			lugarSeleccionadoLabel.setForeground(Color.RED);
+			zonaHorariaSeleccionadaLabel.setForeground(Color.RED);
+			valido = false;
+		} else {
+			lugarSeleccionadoLabel.setForeground(Color.BLACK);
+			zonaHorariaSeleccionadaLabel.setForeground(Color.BLACK);
+		}
+
 		return valido;
 	}
 
@@ -698,10 +698,6 @@ public class EventoCreateView extends AbstractView {
 		return organizadorCB;
 	}
 
-	public JComboBox getZonaHorariaCB() {
-		return zonaHorariaCB;
-	}
-
 	public JLabel getLugarSeleccionadoLabel() {
 		return lugarSeleccionadoLabel;
 	}
@@ -714,9 +710,17 @@ public class EventoCreateView extends AbstractView {
 	public void setLabelSeleccionado() {
 		if (lugarSeleccionado != null) {
 			lugarSeleccionadoLabel.setText(lugarSeleccionado.getNombre());
+			if (lugarSeleccionado.getZonaHorariaNombre() != null) {
+				zonaHorariaSeleccionadaLabel.setText(lugarSeleccionado.getZonaHorariaNombre());
+			} else {
+				zonaHorariaSeleccionadaLabel.setText("(zona horaria no informada)");
+			}
 		} else {
 			lugarSeleccionadoLabel.setText("(sin lugar seleccionado)");
+			zonaHorariaSeleccionadaLabel.setText("(se define al elegir lugar)");
 		}
+		lugarSeleccionadoLabel.setForeground(Color.BLACK);
+		zonaHorariaSeleccionadaLabel.setForeground(Color.BLACK);
 	}
 
 	public LugarDTO getLugarSeleccionado() {

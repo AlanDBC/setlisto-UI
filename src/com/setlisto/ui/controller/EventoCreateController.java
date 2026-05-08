@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import com.setlisto.model.Artista;
-import com.setlisto.model.EventoMusical;
+import com.setlisto.model.EventoMusicalDTO;
 import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.SubGeneroMusical;
 import com.setlisto.service.ArtistaService;
@@ -59,8 +59,8 @@ public class EventoCreateController extends AbstractController {
 	
 	
 	public void doAction() {
-		EventoMusical evento = view.getEvento();
-		EventoMusical creado = eventoService.create(evento);
+		EventoMusicalDTO evento = view.getEvento();
+		EventoMusicalDTO creado = eventoService.create(evento);
 		// view... dependiendo de el exito o no de la operacion, se muestra un mensaje y se limpia el formulario
 		// JoptionPane informando de la insercion
 		

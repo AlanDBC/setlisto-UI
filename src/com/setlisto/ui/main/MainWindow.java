@@ -231,8 +231,6 @@ public class MainWindow extends JFrame {
 		}
 	}
 	
-
-	
 	private void setAllControllers() {
 		// Añadimos todos los controladores iniciales
 //		TODO Controllers para componentes comentados 	
