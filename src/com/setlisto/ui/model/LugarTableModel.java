@@ -10,7 +10,7 @@ import com.setlisto.model.LugarDTO;
 public class LugarTableModel extends AbstractTableModel  {
 
 	public static final String[] COLUMN_NAMES = new String[] {
-			"Id", "Nombre", "Direccion", "Ciudad"
+			"Id", "Nombre", "Direccion", "Ciudad", "Zona Horaria"
 	};
 	
 	private List<LugarDTO> lugares = null;

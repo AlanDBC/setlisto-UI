@@ -9,6 +9,7 @@ import javax.swing.JComboBox;
 import com.setlisto.model.Ciudad;
 import com.setlisto.model.Pais;
 import com.setlisto.model.Region;
+import com.setlisto.model.ZonaHoraria;
 import com.setlisto.service.CiudadService;
 import com.setlisto.service.EstadoEventoService;
 import com.setlisto.service.GeneroMusicalService;
@@ -36,6 +37,7 @@ public class LlenarCombosLugarController {
 	private RegionService regionService = new RegionServiceImpl();
 	private CiudadService ciudadService = new CiudadServiceImpl();
 	private PaisService paisService = new PaisServiceImpl();
+	private ZonaHorariaService zonaHorariaService = new ZonaHorariaServiceImpl();
 
 	public LlenarCombosLugarController(LugarSelectView view) {
 		this.vista = view;
@@ -49,6 +51,7 @@ public class LlenarCombosLugarController {
 	private void cargarDatosIniciales() {
 		// Combos Padres iniciales
 		vista.getPaisCB().setModel(UIUtils.crearModelo(paisService.findAll(), new Pais(null, "Seleccionar")));
+		vista.getZonaHorariaCB().setModel(UIUtils.crearModelo(zonaHorariaService.findAll(), new ZonaHoraria(null, "Seleccionar")));
 	}
 
 	/**

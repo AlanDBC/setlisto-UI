@@ -28,6 +28,17 @@ public class LugarCreateController extends AbstractController {
 	@Override
 	public void doAction() {
 		Lugar lgr = view.getLugar();
+		if (lgr.getNombre() == null || lgr.getNombre().trim().isEmpty()
+				|| lgr.getDireccion() == null || lgr.getDireccion().trim().isEmpty()
+				|| lgr.getCiudadId() == null || lgr.getIdZonaHoraria() == null) {
+			JOptionPane.showMessageDialog(
+					view,
+					"Completa nombre, dirección, ciudad y zona horaria para crear el lugar.",
+					"Datos incompletos",
+					JOptionPane.WARNING_MESSAGE
+					);
+			return;
+		}
 		Lugar creado = service.create(lgr);
 
 		if (creado != null) {

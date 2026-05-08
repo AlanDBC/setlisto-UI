@@ -31,6 +31,7 @@ import com.setlisto.model.Lugar;
 import com.setlisto.model.LugarDTO;
 import com.setlisto.model.Pais;
 import com.setlisto.model.Region;
+import com.setlisto.model.ZonaHoraria;
 import com.setlisto.ui.controller.AceptarLugarSeleccionadoController;
 import com.setlisto.ui.controller.CancelarLugarSeleccionadoController;
 import com.setlisto.ui.controller.LlenarCombosLugarController;
@@ -41,6 +42,7 @@ import com.setlisto.ui.renderer.CiudadCBRenderer;
 import com.setlisto.ui.renderer.LugarTableRenderer;
 import com.setlisto.ui.renderer.PaisCBRenderer;
 import com.setlisto.ui.renderer.RegionCBRenderer;
+import com.setlisto.ui.renderer.ZonaHorariaCBRenderer;
 
 public class LugarSelectView extends JDialog {
 
@@ -56,8 +58,10 @@ public class LugarSelectView extends JDialog {
 	private JComboBox paisCB;
 	private JComboBox regionCB;
 	private JComboBox ciudadCB;
+	private JComboBox zonaHorariaCB;
 	private JLabel direccionLabel;
 	private JLabel lugarLabel;
+	private JLabel zonaHorariaLabel;
 	private JTextField nombreTF;
 	private JTextField direccionTF;
 	private Component verticalStrut;
@@ -100,9 +104,9 @@ public class LugarSelectView extends JDialog {
 		searchPanel = new JPanel();
 		contentPane.add(searchPanel, BorderLayout.NORTH);
 		GridBagLayout gbl_searchPanel = new GridBagLayout();
-		gbl_searchPanel.columnWidths = new int[]{0, 72, 77, 83, 169, 135, 0, 0};
+		gbl_searchPanel.columnWidths = new int[]{0, 72, 77, 83, 169, 135, 135, 0, 0};
 		gbl_searchPanel.rowHeights = new int[]{28, 0, 17, 20, 0, 0, 0, 0, 0, 0, 0};
-		gbl_searchPanel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl_searchPanel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, Double.MIN_VALUE};
 		gbl_searchPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		searchPanel.setLayout(gbl_searchPanel);
 
@@ -148,6 +152,13 @@ public class LugarSelectView extends JDialog {
 		gbc_direccionLabel.gridx = 5;
 		gbc_direccionLabel.gridy = 2;
 		searchPanel.add(direccionLabel, gbc_direccionLabel);
+
+		zonaHorariaLabel = new JLabel("Zona Horaria");
+		GridBagConstraints gbc_zonaHorariaLabel = new GridBagConstraints();
+		gbc_zonaHorariaLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_zonaHorariaLabel.gridx = 6;
+		gbc_zonaHorariaLabel.gridy = 2;
+		searchPanel.add(zonaHorariaLabel, gbc_zonaHorariaLabel);
 
 		horizontalStrut = Box.createHorizontalStrut(20);
 		GridBagConstraints gbc_horizontalStrut = new GridBagConstraints();
@@ -198,10 +209,18 @@ public class LugarSelectView extends JDialog {
 		gbc_direccionTF.gridy = 3;
 		searchPanel.add(direccionTF, gbc_direccionTF);
 
+		zonaHorariaCB = new JComboBox();
+		GridBagConstraints gbc_zonaHorariaCB = new GridBagConstraints();
+		gbc_zonaHorariaCB.insets = new Insets(0, 0, 5, 5);
+		gbc_zonaHorariaCB.fill = GridBagConstraints.HORIZONTAL;
+		gbc_zonaHorariaCB.gridx = 6;
+		gbc_zonaHorariaCB.gridy = 3;
+		searchPanel.add(zonaHorariaCB, gbc_zonaHorariaCB);
+
 		horizontalStrut_1 = Box.createHorizontalStrut(20);
 		GridBagConstraints gbc_horizontalStrut_1 = new GridBagConstraints();
 		gbc_horizontalStrut_1.insets = new Insets(0, 0, 5, 0);
-		gbc_horizontalStrut_1.gridx = 6;
+		gbc_horizontalStrut_1.gridx = 7;
 		gbc_horizontalStrut_1.gridy = 3;
 		searchPanel.add(horizontalStrut_1, gbc_horizontalStrut_1);
 
@@ -320,6 +339,7 @@ public class LugarSelectView extends JDialog {
 		paisCB.setRenderer(new PaisCBRenderer());
 		regionCB.setRenderer(new RegionCBRenderer());
 		ciudadCB.setRenderer(new CiudadCBRenderer());
+		zonaHorariaCB.setRenderer(new ZonaHorariaCBRenderer());
 	}
 
 	private void setAllControllers() {
@@ -364,6 +384,10 @@ public class LugarSelectView extends JDialog {
 
 	public JComboBox getCiudadCB() {
 		return ciudadCB;
+	}
+
+	public JComboBox getZonaHorariaCB() {
+		return zonaHorariaCB;
 	}
 
 	public LugarDTO getLugarSeleccionado() {
@@ -429,6 +453,11 @@ public class LugarSelectView extends JDialog {
 		if (c != null && c.getId() != null) {
 			lugar.setCiudadId(c.getId());
 		}
+
+		ZonaHoraria zh = (ZonaHoraria) zonaHorariaCB.getSelectedItem();
+		if (zh != null && zh.getId() != null) {
+			lugar.setIdZonaHoraria(zh.getId());
+		}
 		
 		return lugar;
 	}
@@ -442,7 +471,8 @@ public class LugarSelectView extends JDialog {
 	// desde aqui cambiamos el texto de una label que muestre el lugar seleccionado, para que el usuario sepa que se ha seleccionado correctamente.
 	public void setLabelSeleccionado () {
 		if (lugarSeleccionado != null) {
-			lugarSeleccionadoLabel.setText("Lugar seleccionado: " + lugarSeleccionado.getNombre() + ", " + lugarSeleccionado.getDireccion());
+			String zona = lugarSeleccionado.getZonaHorariaNombre() == null ? "zona horaria no informada" : lugarSeleccionado.getZonaHorariaNombre();
+			lugarSeleccionadoLabel.setText("Lugar seleccionado: " + lugarSeleccionado.getNombre() + ", " + lugarSeleccionado.getDireccion() + " (" + zona + ")");
 		} else {
 			lugarSeleccionadoLabel.setText("(Sin lugar seleccionado)");
 		}

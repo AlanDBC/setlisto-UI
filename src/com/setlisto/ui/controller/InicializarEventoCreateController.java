@@ -11,7 +11,6 @@ import com.setlisto.model.Organizador;
 import com.setlisto.model.SubGeneroMusicalDTO;
 import com.setlisto.model.SubTipoEventoDTO;
 import com.setlisto.model.TipoEvento;
-import com.setlisto.model.ZonaHoraria;
 import com.setlisto.service.ArtistaService;
 import com.setlisto.service.CiudadService;
 import com.setlisto.service.EstadoEventoService;
@@ -22,7 +21,6 @@ import com.setlisto.service.RegionService;
 import com.setlisto.service.SubGeneroMusicalService;
 import com.setlisto.service.SubTipoEventoService;
 import com.setlisto.service.TipoEventoService;
-import com.setlisto.service.ZonaHorariaService;
 import com.setlisto.service.impl.ArtistaServiceImpl;
 import com.setlisto.service.impl.CiudadServiceImpl;
 import com.setlisto.service.impl.EstadoEventoServiceImpl;
@@ -33,7 +31,6 @@ import com.setlisto.service.impl.RegionServiceImpl;
 import com.setlisto.service.impl.SubGeneroMusicalServiceImpl;
 import com.setlisto.service.impl.SubTipoEventoServiceImpl;
 import com.setlisto.service.impl.TipoEventoServiceImpl;
-import com.setlisto.service.impl.ZonaHorariaServiceImpl;
 import com.setlisto.ui.utils.UIUtils;
 import com.setlisto.ui.view.EventoCreateView;
 
@@ -47,7 +44,6 @@ public class InicializarEventoCreateController {
 	private CiudadService ciudadService = new CiudadServiceImpl();
 	private PaisService paisService = new PaisServiceImpl();
 	private EstadoEventoService estadoService = new EstadoEventoServiceImpl();
-	private ZonaHorariaService zonaHorariaService = new ZonaHorariaServiceImpl();
 	private GeneroMusicalService generoService = new GeneroMusicalServiceImpl();
 	private TipoEventoService tipoService = new TipoEventoServiceImpl();
 	private OrganizadorService organizadorService = new OrganizadorServiceImpl();
@@ -61,7 +57,6 @@ public class InicializarEventoCreateController {
 
 	private void cargarDatosIniciales() {
 		// combo independiente
-		vista.getZonaHorariaCB().setModel(UIUtils.crearModelo(zonaHorariaService.findAll(), new ZonaHoraria(null, "Seleccionar")));
 		vista.getOrganizadorCB().setModel(UIUtils.crearModelo(organizadorService.findAll(), new Organizador(null, "Seleccionar")));
 
 		// combos padres

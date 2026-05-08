@@ -24,6 +24,7 @@ public class LugarTableRenderer implements TableCellRenderer{
 			case 1: label.setText(l.getNombre()); break;
 			case 2: label.setText(l.getDireccion()); break;
 			case 3: label.setText(l.getCiudadNombre()); break;
+			case 4: label.setText(l.getZonaHorariaNombre()); break;
 			default: label.setText("N/A");
 			}
 		}
