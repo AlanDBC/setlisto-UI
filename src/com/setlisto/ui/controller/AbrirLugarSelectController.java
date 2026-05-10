@@ -15,7 +15,7 @@ public class AbrirLugarSelectController extends AbstractController implements Ac
 	private EventoCreateView view;
 	
 	public AbrirLugarSelectController(EventoCreateView view) {
-		super("Buscar", new ImageIcon(EventoCreateView.class.getResource("/nuvola/16x16/1339_kmag_kmag.png")));
+		super("Buscar lugar", new ImageIcon(EventoCreateView.class.getResource("/nuvola/16x16/1339_kmag_kmag.png")));
 		this.view = view;
 	}
 

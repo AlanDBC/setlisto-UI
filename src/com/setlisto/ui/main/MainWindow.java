@@ -19,10 +19,11 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.setlisto.model.Cliente;
 import com.setlisto.model.Organizador;
 import com.setlisto.ui.controller.AbrirBuscarEMController;
+import com.setlisto.ui.controller.AbrirBuscarUsuarioController;
 import com.setlisto.ui.controller.AbrirCrearEMController;
+import com.setlisto.ui.controller.AbrirCrearUsuarioController;
 import com.setlisto.ui.controller.LogoutController;
 import com.setlisto.ui.view.AbstractView;
-import com.setlisto.ui.view.View;
 
 public class MainWindow extends JFrame {
 
@@ -30,8 +31,7 @@ public class MainWindow extends JFrame {
 	private JTabbedPane tabbedPane;
 	private Object usuarioLogueado;
 	private JLabel bienvenidaLabel;
-	private JButton buscarUsuarioButton;
-	private JButton crearUsuarioButton;
+	private JButton gestionUsuariosButton;
 	private JButton buscarEventoButton;
 	private JButton crearEventoButton;
 	private JButton reservasButton;
@@ -84,7 +84,7 @@ public class MainWindow extends JFrame {
 	 */
 	private void initialize() {
 		
-		this.setBounds(100, 100, 465, 310);
+		this.setBounds(100, 100, 1100, 700);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.getContentPane().setLayout(new BorderLayout(0, 0));
 
@@ -105,13 +105,9 @@ public class MainWindow extends JFrame {
 		JPanel usuariosFunctionsCenter = new JPanel();
 		usuariosFunctionsPanel.add(usuariosFunctionsCenter, BorderLayout.SOUTH);
 		
-		buscarUsuarioButton = new JButton("Buscar");
-		buscarUsuarioButton.setIcon(new ImageIcon(MainWindow.class.getResource("/nuvola/16x16/1467_xmag_xmag.png")));
-		usuariosFunctionsCenter.add(buscarUsuarioButton);
-		
-		crearUsuarioButton = new JButton("Crear");
-		crearUsuarioButton.setIcon(new ImageIcon(MainWindow.class.getResource("/nuvola/16x16/1875_viewmag+_viewmag+.png")));
-		usuariosFunctionsCenter.add(crearUsuarioButton);
+		gestionUsuariosButton = new JButton("Buscar");
+		gestionUsuariosButton.setIcon(new ImageIcon(MainWindow.class.getResource("/nuvola/16x16/1312_kdmconfig_kdmconfig.png")));
+		usuariosFunctionsCenter.add(gestionUsuariosButton);
 		
 		JPanel eventosFunctionsPanel = new JPanel();
 		northPanel.add(eventosFunctionsPanel);
@@ -234,8 +230,7 @@ public class MainWindow extends JFrame {
 	private void setAllControllers() {
 		// Añadimos todos los controladores iniciales
 //		TODO Controllers para componentes comentados 	
-//		buscarUsuarioButton.setAction(new AbrirBuscarUsuarioController); 
-//		crearUsuarioButton.setAction(new AbrirCrearUsuarioController); 
+		gestionUsuariosButton.setAction(new AbrirBuscarUsuarioController());
 		buscarEventoButton.setAction(new AbrirBuscarEMController());
 		crearEventoButton.setAction(new AbrirCrearEMController());
 //		reservasButton.setAction(new AbrirReservasController);

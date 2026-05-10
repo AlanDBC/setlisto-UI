@@ -46,3 +46,4 @@ public class ItemSeleccionableRenderer extends JCheckBox implements ListCellRend
         return valor != null ? valor.toString() : "";
     }
 }
+

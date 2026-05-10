@@ -23,19 +23,18 @@ public class CancelarLugarSeleccionadoController extends AbstractController impl
 		this.view = view;
 		this.receptor = receptor;
 	}
+	
+	@Override
+	public void doAction() {
+		receptor.setLugarSeleccionado(null);
+		view.setLugarSeleccionado(null);
+		view.dispose(); 
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		doAction();
 	}
 
-	@Override
-	public void doAction() {
-
-		receptor.setLugarSeleccionado(null);
-		
-		view.setLugarSeleccionado(null);
-		
-		view.dispose(); 
-	}
+	
 }
