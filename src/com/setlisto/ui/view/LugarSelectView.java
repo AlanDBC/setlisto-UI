@@ -85,6 +85,7 @@ public class LugarSelectView extends JDialog {
 	private JButton aceptarButton;
 	private Component horizontalGlue;
 	private EventoCreateView receptor;
+	private Component verticalStrut_3;
 
 	public LugarSelectView(JFrame parent, boolean modal, EventoCreateView receptor) {
 		super(parent, modal);
@@ -95,7 +96,7 @@ public class LugarSelectView extends JDialog {
 
 	public void initialize () {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 900, 600);
+		setBounds(100, 100, 1200, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -112,11 +113,18 @@ public class LugarSelectView extends JDialog {
 
 		buscarLabel = new JLabel("Busqueda de Lugares");
 		GridBagConstraints gbc_buscarLabel = new GridBagConstraints();
-		gbc_buscarLabel.gridwidth = 5;
+		gbc_buscarLabel.gridwidth = 6;
 		gbc_buscarLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_buscarLabel.gridx = 1;
 		gbc_buscarLabel.gridy = 0;
 		searchPanel.add(buscarLabel, gbc_buscarLabel);
+		
+		verticalStrut_3 = Box.createVerticalStrut(20);
+		GridBagConstraints gbc_verticalStrut_3 = new GridBagConstraints();
+		gbc_verticalStrut_3.insets = new Insets(0, 0, 5, 5);
+		gbc_verticalStrut_3.gridx = 4;
+		gbc_verticalStrut_3.gridy = 1;
+		searchPanel.add(verticalStrut_3, gbc_verticalStrut_3);
 
 		paisLabel = new JLabel("Pais");
 		GridBagConstraints gbc_paisLabel = new GridBagConstraints();
@@ -330,6 +338,8 @@ public class LugarSelectView extends JDialog {
 		setAllRenderers();
 
 		setAllControllers();
+		
+		buscarButton.doClick(); // para cargar la tabla con todos los resultados al abrir el dialog.
 
 	}
 

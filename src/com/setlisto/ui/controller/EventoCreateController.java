@@ -48,10 +48,7 @@ public class EventoCreateController extends AbstractController {
 		List<GeneroMusical> generos = generoService.findAll();
 		this.generoSeleccionable.cargarItems(generos);
 		view.setGenerosListModel(generoSeleccionable);
-		
-//		List<SubGeneroMusical> subgeneros = subgeneroService.findByGenero(); TODO implementar
-		
-		
+				
 		List<Artista> artistas = artistaService.findAll();
 		this.artistaSeleccionable.cargarItems(artistas);
 		view.setArtistasListModel(artistaSeleccionable);
@@ -59,6 +56,10 @@ public class EventoCreateController extends AbstractController {
 	
 	
 	public void doAction() {
+		// Validar campos del formulario, si no son validos, marcar los campos en rojo y mostrar un mensaje de error
+		boolean ok = view.validarCampos();
+		
+		
 		EventoMusicalDTO evento = view.getEvento();
 		EventoMusicalDTO creado = eventoService.create(evento);
 		// view... dependiendo de el exito o no de la operacion, se muestra un mensaje y se limpia el formulario

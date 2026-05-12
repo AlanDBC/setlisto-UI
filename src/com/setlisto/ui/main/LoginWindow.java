@@ -10,10 +10,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
 import com.setlisto.ui.controller.LoginController;
 import javax.swing.JCheckBox;
 
@@ -35,6 +37,7 @@ public class LoginWindow extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					UIManager.setLookAndFeel(new FlatDarculaLaf());
 					LoginWindow frame = LoginWindow.getInstance();
 					frame.setVisible(true);
 				} catch (Exception e) {

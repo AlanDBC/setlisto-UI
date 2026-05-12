@@ -594,6 +594,9 @@ public class AdminEventoSearchView extends AbstractView {
 		
 		AutoCompleteDecorator.decorate(paisCB, new PaisToStringConverter()); 
 		
+		
+		buscarButton.doClick(); // para que al abrir la vista ya se muestren resultados, aunque sea el resultado de una búsqueda sin criterios, para que no quede la vista vacía sin tabla ni nada
+		
 	}
 
 	/*private void initServices() {

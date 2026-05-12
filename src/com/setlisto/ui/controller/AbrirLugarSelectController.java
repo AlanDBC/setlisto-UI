@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 
-import com.setlisto.model.LugarDTO;
-import com.setlisto.ui.main.MainWindow;
 import com.setlisto.ui.view.EventoCreateView;
 import com.setlisto.ui.view.LugarSelectView;
 
@@ -21,14 +19,14 @@ public class AbrirLugarSelectController extends AbstractController implements Ac
 
 	@Override
 	public void doAction() {
-		// TODO Auto-generated method stub		
+		LugarSelectView dialog = new LugarSelectView(null, true, this.view);
+        dialog.setLocationRelativeTo(this.view);
+        dialog.setVisible(true);		
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-        LugarSelectView dialog = new LugarSelectView(null, true, this.view);
-        dialog.setLocationRelativeTo(this.view);
-        dialog.setVisible(true);	
+        doAction();
 	}
 	
 	

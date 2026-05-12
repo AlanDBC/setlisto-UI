@@ -269,7 +269,7 @@ public class EventoCreateView extends AbstractView {
 		gbc_zonaHorariaLabel.gridy = 4;
 		add(zonaHorariaLabel, gbc_zonaHorariaLabel);
 		
-		asientosConfiguradosLabel = new JLabel("New label");
+		asientosConfiguradosLabel = new JLabel("(sin configurar)");
 		GridBagConstraints gbc_asientosConfiguradosLabel = new GridBagConstraints();
 		gbc_asientosConfiguradosLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_asientosConfiguradosLabel.gridx = 6;
@@ -675,7 +675,7 @@ public class EventoCreateView extends AbstractView {
 			
 	}
 	// TODO terminar validacion para todos los componentes
-	private boolean validarCampos() {
+	public boolean validarCampos() {
 		boolean valido = true;
 
 		// Validar Nombre
@@ -699,8 +699,8 @@ public class EventoCreateView extends AbstractView {
 			zonaHorariaSeleccionadaLabel.setForeground(Color.RED);
 			valido = false;
 		} else {
-			lugarSeleccionadoLabel.setForeground(Color.BLACK);
-			zonaHorariaSeleccionadaLabel.setForeground(Color.BLACK);
+			lugarSeleccionadoLabel.setForeground(Color.WHITE);
+			zonaHorariaSeleccionadaLabel.setForeground(Color.WHITE);
 		}
 
 		return valido;

@@ -66,11 +66,6 @@ public class PlazasConfigController extends AbstractController implements MouseL
 	        view.setZonaActual(zona); // manda la zona recien creada al panel derecho para que se pueda configurar su cantidad y categoria
 	    }
 	}
-	
-	private void configurarZona(Rectangle area) {
-		zonaActual = new ZonaConfigurada();
-		zonaActual.setArea(area);
-	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {

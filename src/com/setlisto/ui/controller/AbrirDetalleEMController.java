@@ -23,40 +23,37 @@ public class AbrirDetalleEMController extends AbstractController implements Mous
 	@Override
 	public void doAction() {
 	}
-
-	
-	// Este se usa 
+ 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		/*if (e.getClickCount() == 2) { // Doble clic
+		if (e.getClickCount() == 2) { // Doble clic
 			
 			JTable tabla = view.getTable();
 			int selectedRow = tabla.rowAtPoint(e.getPoint());
-			int selectedColumn = tabla.columnAtPoint(e.getPoint());
+			
 			// Verificar que se ha hecho clic en una celda válida
-			if (selectedRow != -1 && selectedColumn != -1) {						
-				EventoMusicalDTO em = (EventoMusicalDTO) tabla.getValueAt(selectedRow, selectedColumn);
-				EventoView eventoView = EventoView.getInstance();
+			if (selectedRow != -1) {
+                // Convertimos el índice por si la tabla está filtrada u ordenada
+                int modelRow = tabla.convertRowIndexToModel(selectedRow);
+                
+				EventoMusicalDTO em = (EventoMusicalDTO) tabla.getValueAt(modelRow, 0);
+				
+                // INSTANCIAMOS UNA NUEVA VISTA, pasamos el DTO y la bloqueamos
+				EventoView eventoView = new EventoView();
 				eventoView.setModel(em);
 				eventoView.setEditable(false);						
-				eventoView.setGuardarController(new EventoSetEditableController(eventoView)); // Cambia el boton de modificar a guardar y TODO implementar
 				
-				MainWindow.getInstance().addTab(em.getNombre(), tabla);
+                // Añadimos la pestaña al MainWindow
+				MainWindow.getInstance().addTab(eventoView);
 			}
 		}
-		*/	
 	}
-	
-	
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 
 	}
-
-	
-
 
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -81,5 +78,4 @@ public class AbrirDetalleEMController extends AbstractController implements Mous
 		// TODO Auto-generated method stub
 
 	}
-
 }
