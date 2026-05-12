@@ -95,7 +95,6 @@ public class EventoCreateView extends AbstractView {
 	private JLabel artistasLabel;
 	private JButton elegirLugarButton;
 	private JLabel lugarSeleccionadoLabel;
-	private JFormattedTextField capacidadFTF;
 	private JLabel capacidadLabel;
 
 	private JList<ItemSeleccionable<SubGeneroMusical>> subgenerosList;
@@ -118,6 +117,7 @@ public class EventoCreateView extends AbstractView {
 	private JLabel zonaHorariaSeleccionadaLabel;
 	private JButton configPlazasButton;
 	private JLabel asientosConfiguradosLabel;
+	private JTextField capacidadTF;
 
 	/**
 	 * Create the panel.
@@ -179,12 +179,12 @@ public class EventoCreateView extends AbstractView {
 		gbc_lugarSeleccionadoLabel.gridy = 1;
 		add(lugarSeleccionadoLabel, gbc_lugarSeleccionadoLabel);
 
-		capacidadLabel = new JLabel("Capacidad");
-		GridBagConstraints gbc_capacidadLabel = new GridBagConstraints();
-		gbc_capacidadLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_capacidadLabel.gridx = 6;
-		gbc_capacidadLabel.gridy = 1;
-		add(capacidadLabel, gbc_capacidadLabel);
+		asientosConfiguradosLabel = new JLabel("(sin configurar)");
+		GridBagConstraints gbc_asientosConfiguradosLabel = new GridBagConstraints();
+		gbc_asientosConfiguradosLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_asientosConfiguradosLabel.gridx = 6;
+		gbc_asientosConfiguradosLabel.gridy = 1;
+		add(asientosConfiguradosLabel, gbc_asientosConfiguradosLabel);
 
 		nombreTF = new JTextField();
 		nombreTF.setColumns(10);
@@ -226,14 +226,15 @@ public class EventoCreateView extends AbstractView {
 		gbc_elegirLugarButton.gridy = 2;
 		add(elegirLugarButton, gbc_elegirLugarButton);
 
-		capacidadFTF = new JFormattedTextField();
-		GridBagConstraints gbc_capacidadFTF = new GridBagConstraints();
-		gbc_capacidadFTF.insets = new Insets(0, 0, 5, 5);
-		gbc_capacidadFTF.fill = GridBagConstraints.HORIZONTAL;
-		gbc_capacidadFTF.gridx = 6;
-		gbc_capacidadFTF.gridy = 2;
-		add(capacidadFTF, gbc_capacidadFTF);
-		
+		configPlazasButton = new JButton("Configurar Plazas");
+		configPlazasButton.setIcon(new ImageIcon(EventoCreateView.class.getResource("/nuvola/16x16/1819_pencil_pencil.png")));
+		GridBagConstraints gbc_configPlazasButton = new GridBagConstraints();
+		gbc_configPlazasButton.anchor = GridBagConstraints.NORTH;
+		gbc_configPlazasButton.insets = new Insets(0, 0, 5, 5);
+		gbc_configPlazasButton.gridx = 6;
+		gbc_configPlazasButton.gridy = 2;
+		add(configPlazasButton, gbc_configPlazasButton);
+
 		verticalStrut_2 = Box.createVerticalStrut(20);
 		GridBagConstraints gbc_verticalStrut_2 = new GridBagConstraints();
 		gbc_verticalStrut_2.insets = new Insets(0, 0, 5, 5);
@@ -261,20 +262,20 @@ public class EventoCreateView extends AbstractView {
 		gbc_artistasLabel.gridx = 3;
 		gbc_artistasLabel.gridy = 4;
 		add(artistasLabel, gbc_artistasLabel);
-		
+
 		zonaHorariaLabel = new JLabel("Zona Horaria del Evento");
 		GridBagConstraints gbc_zonaHorariaLabel = new GridBagConstraints();
 		gbc_zonaHorariaLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_zonaHorariaLabel.gridx = 5;
 		gbc_zonaHorariaLabel.gridy = 4;
 		add(zonaHorariaLabel, gbc_zonaHorariaLabel);
-		
-		asientosConfiguradosLabel = new JLabel("(sin configurar)");
-		GridBagConstraints gbc_asientosConfiguradosLabel = new GridBagConstraints();
-		gbc_asientosConfiguradosLabel.insets = new Insets(0, 0, 5, 5);
-		gbc_asientosConfiguradosLabel.gridx = 6;
-		gbc_asientosConfiguradosLabel.gridy = 4;
-		add(asientosConfiguradosLabel, gbc_asientosConfiguradosLabel);
+
+		capacidadLabel = new JLabel("Capacidad");
+		GridBagConstraints gbc_capacidadLabel = new GridBagConstraints();
+		gbc_capacidadLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_capacidadLabel.gridx = 6;
+		gbc_capacidadLabel.gridy = 4;
+		add(capacidadLabel, gbc_capacidadLabel);
 
 		generosList = new JList();
 		GridBagConstraints gbc_generosList = new GridBagConstraints();
@@ -308,7 +309,7 @@ public class EventoCreateView extends AbstractView {
 		JScrollPane artistasScroll = new JScrollPane(artistasList);
 		artistasScroll.setPreferredSize(new Dimension(180, 200));
 		add(artistasScroll, gbc_artistasList);
-		
+
 		zonaHorariaSeleccionadaLabel = new JLabel("(se define al elegir lugar)");
 		GridBagConstraints gbc_zonaHorariaSeleccionadaLabel = new GridBagConstraints();
 		gbc_zonaHorariaSeleccionadaLabel.anchor = GridBagConstraints.NORTH;
@@ -317,15 +318,16 @@ public class EventoCreateView extends AbstractView {
 		gbc_zonaHorariaSeleccionadaLabel.gridy = 5;
 		add(zonaHorariaSeleccionadaLabel, gbc_zonaHorariaSeleccionadaLabel);
 		
-		configPlazasButton = new JButton("Configurar Plazas");
-		configPlazasButton.setIcon(new ImageIcon(EventoCreateView.class.getResource("/nuvola/16x16/1819_pencil_pencil.png")));
-		GridBagConstraints gbc_configPlazasButton = new GridBagConstraints();
-		gbc_configPlazasButton.anchor = GridBagConstraints.NORTH;
-		gbc_configPlazasButton.insets = new Insets(0, 0, 5, 5);
-		gbc_configPlazasButton.gridx = 6;
-		gbc_configPlazasButton.gridy = 5;
-		add(configPlazasButton, gbc_configPlazasButton);
-		
+		capacidadTF = new JTextField();
+		GridBagConstraints gbc_capacidadTF = new GridBagConstraints();
+		gbc_capacidadTF.anchor = GridBagConstraints.NORTH;
+		gbc_capacidadTF.insets = new Insets(0, 0, 5, 5);
+		gbc_capacidadTF.fill = GridBagConstraints.HORIZONTAL;
+		gbc_capacidadTF.gridx = 6;
+		gbc_capacidadTF.gridy = 5;
+		add(capacidadTF, gbc_capacidadTF);
+		capacidadTF.setColumns(10);
+
 		verticalStrut_3 = Box.createVerticalStrut(20);
 		GridBagConstraints gbc_verticalStrut_3 = new GridBagConstraints();
 		gbc_verticalStrut_3.insets = new Insets(0, 0, 5, 5);
@@ -420,7 +422,7 @@ public class EventoCreateView extends AbstractView {
 		gbc_horaInicioFTF.gridx = 5;
 		gbc_horaInicioFTF.gridy = 8;
 		add(horaInicioFTF, gbc_horaInicioFTF);
-		
+
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
 		GridBagConstraints gbc_horizontalStrut_2 = new GridBagConstraints();
 		gbc_horizontalStrut_2.insets = new Insets(0, 0, 5, 0);
@@ -452,7 +454,7 @@ public class EventoCreateView extends AbstractView {
 		gbc_horaFinFTF.gridx = 5;
 		gbc_horaFinFTF.gridy = 10;
 		add(horaFinFTF, gbc_horaFinFTF);
-		
+
 		verticalStrut_4 = Box.createVerticalStrut(20);
 		GridBagConstraints gbc_verticalStrut_4 = new GridBagConstraints();
 		gbc_verticalStrut_4.insets = new Insets(0, 0, 5, 5);
@@ -532,7 +534,7 @@ public class EventoCreateView extends AbstractView {
 		entradasTA.setText("");
 		ubicacionTA.setText("");
 		descripcionTA.setText("");
-		capacidadFTF.setText("");
+		capacidadTF.setText("");
 
 		// Horas (Resetear al formato visual inicial)
 		horaInicioFTF.setText("00 : 00");
@@ -565,11 +567,11 @@ public class EventoCreateView extends AbstractView {
 		if (artistasModel != null) {
 			artistasModel.resetear();
 		}
-		
+
 		generosList.clearSelection();
 		subgenerosList.clearSelection();
 		artistasList.clearSelection();
-		
+
 		setLugarSeleccionado(null);
 	}
 
@@ -599,7 +601,7 @@ public class EventoCreateView extends AbstractView {
 		}
 
 		// 4. Capacidad y Subtipo
-		String capText = capacidadFTF.getText().trim();
+		String capText = capacidadTF.getText().trim();
 		em.setCapacidad(capText.isEmpty() ? null : Integer.parseInt(capText));
 
 		SubTipoEventoDTO sub = (SubTipoEventoDTO) subtipoCB.getSelectedItem();
@@ -670,9 +672,9 @@ public class EventoCreateView extends AbstractView {
 		generosList.addMouseListener(listaGenerosController);
 		subgenerosList.addMouseListener(listaSubgenerosController);
 		artistasList.addMouseListener(listaArtistasController);
-		
+
 		configPlazasButton.setAction(new AbrirConfigPlazasController(this));
-			
+
 	}
 	// TODO terminar validacion para todos los componentes
 	public boolean validarCampos() {
@@ -773,13 +775,13 @@ public class EventoCreateView extends AbstractView {
 	public ListSeleccionableModel<Artista> getArtistasModel() {
 		return artistasModel;
 	}
-	
+
 	public void setZonasConfiguradas(List<ZonaConfigurada> zonas) {
-	    this.zonasConfiguradas = zonas;
-	    configPlazasButton.setText("Plazas Config. (" + zonas.size() + ")");
+		this.zonasConfiguradas = zonas;
+		configPlazasButton.setText("Plazas Config. (" + zonas.size() + ")");
 	}
 
 	public List<ZonaConfigurada> getZonasConfiguradas() {
-	    return this.zonasConfiguradas;
+		return this.zonasConfiguradas;
 	}
 }
