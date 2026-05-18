@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 
 import com.setlisto.criteria.LugarCriteria;
@@ -35,10 +36,14 @@ public class LugarSearchController extends AbstractController implements ActionL
 
 	@Override
 	public void doAction() {
-		LugarCriteria criteria = view.getCriteria();
-		Results<LugarDTO> results = service.findByCriteria(criteria, 0, 20);
-		List<LugarDTO> list = results.getPage();
-		view.setModel(list);
+		try {
+			LugarCriteria criteria = view.getCriteria();
+			Results<LugarDTO> results = service.findByCriteria(criteria, 0, 20);
+			List<LugarDTO> list = results.getPage();
+			view.setModel(list);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(view, "No fue posible buscar lugares: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	@Override // Buttons

@@ -22,6 +22,7 @@ import com.setlisto.ui.controller.AbrirBuscarEMController;
 import com.setlisto.ui.controller.AbrirBuscarUsuarioController;
 import com.setlisto.ui.controller.AbrirCrearEMController;
 import com.setlisto.ui.controller.AbrirCrearUsuarioController;
+import com.setlisto.ui.controller.AbrirReservasController;
 import com.setlisto.ui.controller.LogoutController;
 import com.setlisto.ui.view.AbstractView;
 
@@ -70,8 +71,10 @@ public class MainWindow extends JFrame {
 			instance = new MainWindow();
 		}
 		return instance;
-	} 
-/*
+	}
+	
+	// Para la demo activar este constructor alternativo para pasar el usuario logueado al iniciar la aplicación, si se desea
+	/*
 	 public MainWindow(Object usuarioLogueado) {
 		this.usuarioLogueado = usuarioLogueado;
 		initialize();
@@ -233,7 +236,7 @@ public class MainWindow extends JFrame {
 		gestionUsuariosButton.setAction(new AbrirBuscarUsuarioController());
 		buscarEventoButton.setAction(new AbrirBuscarEMController());
 		crearEventoButton.setAction(new AbrirCrearEMController());
-//		reservasButton.setAction(new AbrirReservasController);
+		reservasButton.setAction(new AbrirReservasController());
 //		resenasButton.setAction(new AbrirResenasController);
 //		estadisticasButton.setAction(new AbrirEstadisticasController);
 		cerrarSesionMI.setAction(new LogoutController());

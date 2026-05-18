@@ -140,11 +140,7 @@ public class ClienteView extends AbstractView {
 
 	private void postInitialize() {
 		ClienteViewController controller = new ClienteViewController(this);
-		// filtrado en tiempo real para componentes de búsqueda
-		
-		
-		
-		
+		// filtrado en tiempo real para componentes de búsqueda TODO
 		buscarButton.setAction(controller);
 		refrescarButton.setAction(controller);
 		nuevoButton.setAction(controller.getNuevoAction());
@@ -191,6 +187,8 @@ public class ClienteView extends AbstractView {
 		registroHastaDC.setDate(null);
 		activoCB.setSelectedIndex(0);
 		verificadoCB.setSelectedIndex(0);
+		
+		buscarButton.doClick();
 	}
 
 	private void addLabel(JPanel panel, String text, int gridx, int gridy) {

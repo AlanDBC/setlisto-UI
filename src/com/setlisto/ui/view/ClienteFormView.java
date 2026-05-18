@@ -47,7 +47,7 @@ public class ClienteFormView extends JDialog {
 		initialize();
 		cargarCliente(cliente);
 		guardarButton.setAction(new ClienteFormController(this, onSaved));
-		cancelarButton.addActionListener(e -> dispose());
+		postInitialize();
 	}
 
 	private void initialize() {
@@ -82,6 +82,11 @@ public class ClienteFormView extends JDialog {
 		buttonPanel.add(cancelarButton);
 		guardarButton = new JButton("Guardar");
 		buttonPanel.add(guardarButton);
+	}
+	
+	public void postInitialize() {
+		
+		cancelarButton.addActionListener(e -> dispose());
 	}
 
 	public Cliente getClienteFromFields() {

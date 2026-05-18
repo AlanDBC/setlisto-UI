@@ -169,6 +169,8 @@ public class OrganizadorView extends AbstractView {
 		verificadoCB.setSelectedIndex(0);
 		nacimientoDesdeDC.setDate(null);
 		nacimientoHastaDC.setDate(null);
+		
+		buscarButton.doClick();
 	}
 
 	private void addLabel(JPanel panel, String text, int gridx, int gridy) {

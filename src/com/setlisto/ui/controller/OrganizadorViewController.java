@@ -35,10 +35,14 @@ public class OrganizadorViewController extends AbstractController implements Act
 
 	@Override
 	public void doAction() {
-		OrganizadorCriteria criteria = view.getCriteria();
-		Results<Organizador> organizadores = organizadorService.findByCriteria(criteria, 0, 100);
-		List<Organizador> list = organizadores == null ? null : organizadores.getPage();
-		view.setResults(list);
+		try {
+			OrganizadorCriteria criteria = view.getCriteria();
+			Results<Organizador> organizadores = organizadorService.findByCriteria(criteria, 0, 100);
+			List<Organizador> list = organizadores == null ? null : organizadores.getPage();
+			view.setResults(list);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(view, "No fue posible buscar organizadores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	// Para filtrado en tiempo real
@@ -107,8 +111,12 @@ public class OrganizadorViewController extends AbstractController implements Act
 						"Confirmar eliminacion",
 						JOptionPane.YES_NO_OPTION);
 				if (option == JOptionPane.YES_OPTION) {
-					organizadorService.delete(seleccionado.getId());
-					doAction();
+					try {
+						organizadorService.delete(seleccionado.getId());
+						doAction();
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(view, "No fue posible eliminar el organizador: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		};
@@ -124,8 +132,12 @@ public class OrganizadorViewController extends AbstractController implements Act
 				if (seleccionado == null) {
 					return;
 				}
-				organizadorService.updateVerifiedStatus(seleccionado.getId(), !Boolean.TRUE.equals(seleccionado.getVerificado()));
-				doAction();
+				try {
+					organizadorService.updateVerifiedStatus(seleccionado.getId(), !Boolean.TRUE.equals(seleccionado.getVerificado()));
+					doAction();
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(view, "No fue posible cambiar la verificacion: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		};
 	}

@@ -1,6 +1,7 @@
 package com.setlisto.ui.controller;
 
 import java.awt.Rectangle;
+import java.math.BigDecimal;
 
 import com.setlisto.model.CategoriaAsiento;
 
@@ -12,6 +13,9 @@ public class ZonaConfigurada {
 	private String seccion; // "A", "B", "C"...
 	private CategoriaAsiento categoria; // Obtenida del CategoriaAsientoService
 	private int cantidad; // Del JSpinner	
+	private BigDecimal precio;
+	private Long id;
+	private Integer disponibles;
 
 	public ZonaConfigurada() {
 	}
@@ -32,6 +36,18 @@ public class ZonaConfigurada {
 		return cantidad;
 	}
 
+	public BigDecimal getPrecio() {
+		return precio;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public Integer getDisponibles() {
+		return disponibles;
+	}
+
 	public void setArea(Rectangle area) {
 		this.area = area;
 	}
@@ -46,5 +62,17 @@ public class ZonaConfigurada {
 
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
+	}
+
+	public void setPrecio(BigDecimal precio) {
+		this.precio = precio;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setDisponibles(Integer disponibles) {
+		this.disponibles = disponibles;
 	}
 }

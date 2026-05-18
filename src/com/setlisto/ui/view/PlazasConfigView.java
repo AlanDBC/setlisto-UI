@@ -1,4 +1,5 @@
 package com.setlisto.ui.view;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,6 +14,9 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import com.setlisto.model.CategoriaAsiento;
 import com.setlisto.ui.controller.AdjuntarImagenButtonController;
@@ -22,14 +26,8 @@ import com.setlisto.ui.controller.LlenarComboPlazasConfigController;
 import com.setlisto.ui.controller.ZonaConfigurada;
 import com.setlisto.ui.renderer.CategoriaAsientoCBRenderer;
 
-/**
- *  Esta vista estara dentro de un JDialog que nace de dar clic al boton "Configurar Asientos" en la vista de "Crear Evento".
- *  Aqui se configurara el numero y ubicacion de los asientos para el evento que se esta creando.
- *  Se subira una imagen tipo plano del lugar del evento, y se podra marcar en ella la ubicacion de los asientos, 
- *  ademas de configurar el numero de asientos por cada ubicacion.
- *  Para el MVP se podra configurar un numero de asientos con su categoria a partir de un rectangulo que se dibuje sobre la imagen del plano, 
- *  Una vez que se dibuje el rectangulo, se podra configurar el numero de asientos y su categoria (VIP, General, etc) para esa ubicacion.
- */
+import java.math.BigDecimal;
+
 public class PlazasConfigView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -40,13 +38,14 @@ public class PlazasConfigView extends JDialog {
 	private PlazasMapaPanel mapaPanel;
 	private JSpinner numeroAsientosSpinner;
 	private JComboBox categoriaCB;
-	private ZonaConfigurada zonaActual; // Para mantener referencia a la zona que se está editando
+	private JTextField precioTF;
+	private ZonaConfigurada zonaActual;
 	private EventoCreateView receptor;
 	private JLabel seccionSelectLabel;
+	
+	// Bandera añadida para evitar sobrescrituras de eventos al cambiar de zonas
+	private boolean isUpdating = false;
 
-	/**
-	 * Create the panel.
-	 */
 	public PlazasConfigView(EventoCreateView receptor) {
 		this.receptor = receptor;
 		setName("Configurar Asientos"); 
@@ -56,9 +55,7 @@ public class PlazasConfigView extends JDialog {
 
 	private void initialize() {
 		getContentPane().setLayout(new BorderLayout(0, 0));
-		// Dimensiones iniciales del dialog, se pueden ajustar segun sea necesario
 		setPreferredSize(new Dimension(1000, 800));
-
 		JPanel northPanel = new JPanel();
 		getContentPane().add(northPanel, BorderLayout.NORTH);
 
@@ -67,7 +64,6 @@ public class PlazasConfigView extends JDialog {
 
 		mapaPanel = new PlazasMapaPanel();
 		getContentPane().add(mapaPanel, BorderLayout.CENTER);
-
 		JPanel southPanel = new JPanel();
 		getContentPane().add(southPanel, BorderLayout.SOUTH);
 
@@ -76,7 +72,6 @@ public class PlazasConfigView extends JDialog {
 
 		limpiarButton = new JButton("Limpiar");
 		southPanel.add(limpiarButton);
-
 		Component horizontalGlue = Box.createHorizontalGlue();
 		southPanel.add(horizontalGlue);
 
@@ -87,9 +82,9 @@ public class PlazasConfigView extends JDialog {
 		getContentPane().add(rightPanel, BorderLayout.EAST);
 		GridBagLayout gbl_rightPanel = new GridBagLayout();
 		gbl_rightPanel.columnWidths = new int[]{173, 0};
-		gbl_rightPanel.rowHeights = new int[]{13, 0, 0, 0, 0, 0, 0, 0};
+		gbl_rightPanel.rowHeights = new int[]{13, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_rightPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_rightPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_rightPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		rightPanel.setLayout(gbl_rightPanel);
 
 		seccionSelectLabel = new JLabel("Seccion Seleccionada: (Sin seleccion)");
@@ -124,24 +119,34 @@ public class PlazasConfigView extends JDialog {
 
 		numeroAsientosSpinner = new JSpinner();
 		GridBagConstraints gbc_numeroAsientosSpinner = new GridBagConstraints();
+		gbc_numeroAsientosSpinner.insets = new Insets(0, 0, 5, 0);
 		gbc_numeroAsientosSpinner.gridx = 0;
 		gbc_numeroAsientosSpinner.gridy = 6;
 		rightPanel.add(numeroAsientosSpinner, gbc_numeroAsientosSpinner);
+
+		JLabel precioLabel = new JLabel("Precio Base");
+		GridBagConstraints gbc_precioLabel = new GridBagConstraints();
+		gbc_precioLabel.insets = new Insets(0, 0, 5, 0);
+		gbc_precioLabel.gridx = 0;
+		gbc_precioLabel.gridy = 7;
+		rightPanel.add(precioLabel, gbc_precioLabel);
+
+		precioTF = new JTextField();
+		GridBagConstraints gbc_precioTF = new GridBagConstraints();
+		gbc_precioTF.fill = GridBagConstraints.HORIZONTAL;
+		gbc_precioTF.gridx = 0;
+		gbc_precioTF.gridy = 8;
+		rightPanel.add(precioTF, gbc_precioTF);
 	}
 
 	public void postInitialize() {
 		setControllers();
 		setRenderers();
-		// inicialmente el panel derecho esta desactivado, se activara una vez que se dibuje un 
-		// rectangulo en el mapa para configurar la categoria y numero de asientos de esa seccion
 		setRightPanelActive(false);
 	}
 	
 	public void setControllers() {
-		// Agregar Listener al panel del mapa para detectar pressed y released despues de deslizar el mouse y asi dibujar el
-		// rectangulo que representa la seccion de asientos que se esta configurando
 		LlenarComboPlazasConfigController llenarComboController = new LlenarComboPlazasConfigController(this);
-
 		PlazasConfigController controller = new PlazasConfigController(this);
 		mapaPanel.addMouseListener(controller);
 		mapaPanel.addMouseMotionListener(controller);
@@ -152,20 +157,26 @@ public class PlazasConfigView extends JDialog {
 		AdjuntarImagenButtonController adjuntarController = new AdjuntarImagenButtonController(this);
 		adjuntarImgButton.setAction(adjuntarController);
 		
-		// Binding en tiempo real: Actualizar zonaActual al editar los campos
+		// Utilizamos la bandera !isUpdating para no disparar las lógicas si es manipulación programática
 	    categoriaCB.addActionListener(e -> {
-	    	if (zonaActual != null && categoriaCB.getSelectedItem() instanceof CategoriaAsiento) {
+	    	if (!isUpdating && zonaActual != null && categoriaCB.getSelectedItem() instanceof CategoriaAsiento) {
 	            zonaActual.setCategoria((CategoriaAsiento) categoriaCB.getSelectedItem());
 	        }
 	    });
 	    
 	    numeroAsientosSpinner.addChangeListener(e -> {
-	        if (zonaActual != null) {
+	        if (!isUpdating && zonaActual != null) {
 	            zonaActual.setCantidad((Integer) numeroAsientosSpinner.getValue());
 	        }
 	    });
-		
-		cancelarButton.addActionListener(e -> this.dispose()); // Simplemente cerrar la ventana sin guardar cambios
+
+	    precioTF.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) { actualizarPrecioZona(); }
+			public void removeUpdate(DocumentEvent e) { actualizarPrecioZona(); }
+			public void changedUpdate(DocumentEvent e) { actualizarPrecioZona(); }
+		});
+	    
+	    cancelarButton.addActionListener(e -> this.dispose());
 	}
 	
 	public void setRenderers() {
@@ -179,6 +190,7 @@ public class PlazasConfigView extends JDialog {
 	public void setRightPanelActive(boolean active) {
 		categoriaCB.setEnabled(active);
 		numeroAsientosSpinner.setEnabled(active);
+		precioTF.setEnabled(active);
 	}
 
 	public JComboBox getCategoriaCB() {
@@ -187,29 +199,47 @@ public class PlazasConfigView extends JDialog {
 
 	// Actualiza los valores del panel lateral cuando se selecciona una zona
 	public void setZonaActual(ZonaConfigurada zona) {
+	    // Hacemos commit seguro por si se ha introducido un número por teclado pero no se le dio al enter o clickó otra cosa
+	    if (this.zonaActual != null) {
+	        try {
+	            numeroAsientosSpinner.commitEdit();
+	        } catch (Exception ignored) {}
+	    }
+	    
 	    this.zonaActual = zona;
 	    mapaPanel.setZonaSeleccionada(zona); // Feedback visual
 	    
+	    // Activamos bandera para no alterar el modelo a medida que se carga el formulario visual
+	    isUpdating = true;
+	    
 	    if (zona != null) {
 	        setRightPanelActive(true);
-	        // Poblar campos con los datos de la zona seleccionada
 	        if (zona.getCategoria() != null) {
 	            categoriaCB.setSelectedItem(zona.getCategoria());
 	        } else {
 	            categoriaCB.setSelectedIndex(0);
 	        }
 	        numeroAsientosSpinner.setValue(zona.getCantidad() > 0 ? zona.getCantidad() : 0);
+	        precioTF.setText(zona.getPrecio() != null ? zona.getPrecio().toPlainString() : "");
 
-	         seccionSelectLabel.setText("Seccion Seleccionada: " + zona.getSeccion()); 
+	        seccionSelectLabel.setText("Seccion Seleccionada: " + zona.getSeccion());
 	    } else {
 	        setRightPanelActive(false);
+	        seccionSelectLabel.setText("Seccion Seleccionada: (Sin seleccion)");
+	        categoriaCB.setSelectedIndex(0);
+	        numeroAsientosSpinner.setValue(0);
+	        precioTF.setText("");
 	    }
+	    
+	    // Apagamos bandera, ya podemos volver a escuchar acciones de usuario.
+	    isUpdating = false;
 	}
 	
 	public ZonaConfigurada cargarDatosZona() {
 		if (zonaActual != null) {
 			zonaActual.setCategoria((CategoriaAsiento) categoriaCB.getSelectedItem());
 			zonaActual.setCantidad((Integer) numeroAsientosSpinner.getValue());
+			zonaActual.setPrecio(getPrecioActual());
 			return zonaActual;
 		}
 		return null;
@@ -219,4 +249,18 @@ public class PlazasConfigView extends JDialog {
 		mapaPanel.agregarZona(zona);
 	}
 
+	private BigDecimal getPrecioActual() {
+		String precio = precioTF.getText().trim().replace(",", ".");
+		return precio.isEmpty() ? null : new BigDecimal(precio);
+	}
+
+	private void actualizarPrecioZona() {
+		if (!isUpdating && zonaActual != null) {
+			try {
+				zonaActual.setPrecio(getPrecioActual());
+			} catch (NumberFormatException ignored) {
+				zonaActual.setPrecio(null);
+			}
+		}
+	}
 }

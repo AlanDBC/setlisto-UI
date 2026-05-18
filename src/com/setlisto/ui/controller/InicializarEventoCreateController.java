@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.Organizador;
@@ -56,15 +57,19 @@ public class InicializarEventoCreateController {
 	}
 
 	private void cargarDatosIniciales() {
-		// combo independiente
-		vista.getOrganizadorCB().setModel(UIUtils.crearModelo(organizadorService.findAll(), new Organizador(null, "Seleccionar")));
+		try {
+			// combo independiente
+			vista.getOrganizadorCB().setModel(UIUtils.crearModelo(organizadorService.findAll(), new Organizador(null, "Seleccionar")));
 
-		// combos padres
-		vista.getTipoCB().setModel(UIUtils.crearModelo(tipoService.findAll(), new TipoEvento(null, "Seleccionar")));
-		
-		// Llenado de las listas seleccionables
-		vista.getGenerosModel().cargarItems(generoService.findAll());
-		vista.getArtistasModel().cargarItems(artistaService.findAll());
+			// combos padres
+			vista.getTipoCB().setModel(UIUtils.crearModelo(tipoService.findAll(), new TipoEvento(null, "Seleccionar")));
+			
+			// Llenado de las listas seleccionables
+			vista.getGenerosModel().cargarItems(generoService.findAll());
+			vista.getArtistasModel().cargarItems(artistaService.findAll());
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(vista, "No fue posible cargar datos iniciales: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	private void configurarRelacion(JComboBox comboPadre, Runnable accionCarga) {
@@ -79,8 +84,12 @@ public class InicializarEventoCreateController {
 		configurarRelacion(vista.getTipoCB(), () -> {
 			TipoEvento padre = (TipoEvento) vista.getTipoCB().getSelectedItem();
 			if (padre != null && padre.getId() != null) {
-				List<SubTipoEventoDTO> hijos = subtipoService.findByTipoEvento(padre.getId());
-				vista.getSubtipoCB().setModel(UIUtils.crearModelo(hijos, new SubTipoEventoDTO(null, "Seleccionar")));
+				try {
+					List<SubTipoEventoDTO> hijos = subtipoService.findByTipoEvento(padre.getId());
+					vista.getSubtipoCB().setModel(UIUtils.crearModelo(hijos, new SubTipoEventoDTO(null, "Seleccionar")));
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(vista, "No fue posible cargar subtipos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				vista.getSubtipoCB().setModel(new DefaultComboBoxModel<>());
 			}

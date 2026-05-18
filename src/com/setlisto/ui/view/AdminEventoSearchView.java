@@ -1,6 +1,7 @@
 package com.setlisto.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,6 +14,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -35,11 +38,11 @@ import com.setlisto.model.EstadoEvento;
 import com.setlisto.model.EventoMusicalDTO;
 import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.Pais;
-import com.setlisto.model.Region;
 import com.setlisto.model.SubGeneroMusicalDTO;
 import com.setlisto.model.SubTipoEventoDTO;
 import com.setlisto.model.TipoEvento;
 import com.setlisto.model.ZonaHoraria;
+import com.setlisto.model.Region;
 import com.setlisto.service.CiudadService;
 import com.setlisto.service.EventoMusicalService;
 import com.setlisto.service.GeneroMusicalService;
@@ -66,10 +69,6 @@ import com.setlisto.ui.renderer.SubtipoEventoCBRenderer;
 import com.setlisto.ui.renderer.TipoEventoCBRenderer;
 import com.setlisto.ui.renderer.ZonaHorariaCBRenderer;
 import com.toedter.calendar.JDateChooser;
-import java.awt.Component;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 
 public class AdminEventoSearchView extends AbstractView {
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 import com.setlisto.model.Ciudad;
 import com.setlisto.model.Pais;
@@ -49,9 +50,13 @@ public class LlenarCombosLugarController {
 	 * Carga los datos iniciales para los combos independientes (que no dependen de otro combo) y los combos padres.
 	 */
 	private void cargarDatosIniciales() {
-		// Combos Padres iniciales
-		vista.getPaisCB().setModel(UIUtils.crearModelo(paisService.findAll(), new Pais(null, "Seleccionar")));
-		vista.getZonaHorariaCB().setModel(UIUtils.crearModelo(zonaHorariaService.findAll(), new ZonaHoraria(null, "Seleccionar")));
+		try {
+			// Combos Padres iniciales
+			vista.getPaisCB().setModel(UIUtils.crearModelo(paisService.findAll(), new Pais(null, "Seleccionar")));
+			vista.getZonaHorariaCB().setModel(UIUtils.crearModelo(zonaHorariaService.findAll(), new ZonaHoraria(null, "Seleccionar")));
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(vista, "No fue posible cargar combos de lugar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
@@ -76,9 +81,13 @@ public class LlenarCombosLugarController {
 		configurarRelacion(vista.getPaisCB(), () -> {
 			Pais padre = (Pais) vista.getPaisCB().getSelectedItem();
 			if (padre != null && padre.getId() != null) {
-				List<Region> hijos = regionService.findByPaisId(padre.getId());
-				vista.getRegionCB().setModel(UIUtils.crearModelo(hijos, new Region(null, "Seleccionar")));
-				vista.getCiudadCB().setModel(new DefaultComboBoxModel<>()); // Limpiar nieto
+				try {
+					List<Region> hijos = regionService.findByPaisId(padre.getId());
+					vista.getRegionCB().setModel(UIUtils.crearModelo(hijos, new Region(null, "Seleccionar")));
+					vista.getCiudadCB().setModel(new DefaultComboBoxModel<>()); // Limpiar nieto
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(vista, "No fue posible cargar regiones: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				vista.getRegionCB().setModel(new DefaultComboBoxModel<>());
 				vista.getCiudadCB().setModel(new DefaultComboBoxModel<>());
@@ -89,8 +98,12 @@ public class LlenarCombosLugarController {
 		configurarRelacion(vista.getRegionCB(), () -> {
 			Region padre = (Region) vista.getRegionCB().getSelectedItem();
 			if (padre != null && padre.getId() != null) {
-				List<Ciudad> hijos = ciudadService.findByRegionId(padre.getId());
-				vista.getCiudadCB().setModel(UIUtils.crearModelo(hijos, new Ciudad(null, "Seleccionar")));
+				try {
+					List<Ciudad> hijos = ciudadService.findByRegionId(padre.getId());
+					vista.getCiudadCB().setModel(UIUtils.crearModelo(hijos, new Ciudad(null, "Seleccionar")));
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(vista, "No fue posible cargar ciudades: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				vista.getCiudadCB().setModel(new DefaultComboBoxModel<>());
 			}

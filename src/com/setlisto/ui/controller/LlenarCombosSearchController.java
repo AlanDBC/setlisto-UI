@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 import com.setlisto.model.Ciudad;
 import com.setlisto.model.EstadoEvento;
@@ -60,14 +61,18 @@ public class LlenarCombosSearchController {
 	 * Carga los datos iniciales para los combos independientes (que no dependen de otro combo) y los combos padres.
 	 */
 	private void cargarDatosIniciales() {
-		// Combos independientes
-		vista.getEstadoCB().setModel(UIUtils.crearModelo(estadoService.findAll(), new EstadoEvento(null, "Seleccionar")));
-		vista.getZonaHorariaCB().setModel(UIUtils.crearModelo(zonaHorariaService.findAll(), new ZonaHoraria(null, "Seleccionar")));
+		try {
+			// Combos independientes
+			vista.getEstadoCB().setModel(UIUtils.crearModelo(estadoService.findAll(), new EstadoEvento(null, "Seleccionar")));
+			vista.getZonaHorariaCB().setModel(UIUtils.crearModelo(zonaHorariaService.findAll(), new ZonaHoraria(null, "Seleccionar")));
 
-		// Combos Padres iniciales
-		vista.getPaisCB().setModel(UIUtils.crearModelo(paisService.findAll(), new Pais(null, "Seleccionar")));
-		vista.getGeneroCB().setModel(UIUtils.crearModelo(generoService.findAll(), new GeneroMusical(null, "Seleccionar")));
-		vista.getTipoCB().setModel(UIUtils.crearModelo(tipoService.findAll(), new TipoEvento(null, "Seleccionar")));
+			// Combos Padres iniciales
+			vista.getPaisCB().setModel(UIUtils.crearModelo(paisService.findAll(), new Pais(null, "Seleccionar")));
+			vista.getGeneroCB().setModel(UIUtils.crearModelo(generoService.findAll(), new GeneroMusical(null, "Seleccionar")));
+			vista.getTipoCB().setModel(UIUtils.crearModelo(tipoService.findAll(), new TipoEvento(null, "Seleccionar")));
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(vista, "No fue posible cargar filtros: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	/**
@@ -92,8 +97,12 @@ public class LlenarCombosSearchController {
 		configurarRelacion(vista.getTipoCB(), () -> {
 			TipoEvento padre = (TipoEvento) vista.getTipoCB().getSelectedItem();
 			if (padre != null && padre.getId() != null) {
-				List<SubTipoEventoDTO> hijos = subtipoService.findByTipoEvento(padre.getId());
-				vista.getSubtipoCB().setModel(UIUtils.crearModelo(hijos, new SubTipoEventoDTO(null, "Seleccionar")));
+				try {
+					List<SubTipoEventoDTO> hijos = subtipoService.findByTipoEvento(padre.getId());
+					vista.getSubtipoCB().setModel(UIUtils.crearModelo(hijos, new SubTipoEventoDTO(null, "Seleccionar")));
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(vista, "No fue posible cargar subtipos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				vista.getSubtipoCB().setModel(new DefaultComboBoxModel<>());
 			}
@@ -103,8 +112,12 @@ public class LlenarCombosSearchController {
 		configurarRelacion(vista.getGeneroCB(), () -> {
 			GeneroMusical padre = (GeneroMusical) vista.getGeneroCB().getSelectedItem();
 			if (padre != null && padre.getId() != null) {
-				List<SubGeneroMusicalDTO> hijos = subgeneroService.findByGenero(padre.getId());
-				vista.getSubgeneroCB().setModel(UIUtils.crearModelo(hijos, new SubGeneroMusicalDTO(null, "Seleccionar")));
+				try {
+					List<SubGeneroMusicalDTO> hijos = subgeneroService.findByGenero(padre.getId());
+					vista.getSubgeneroCB().setModel(UIUtils.crearModelo(hijos, new SubGeneroMusicalDTO(null, "Seleccionar")));
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(vista, "No fue posible cargar subgeneros: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				vista.getSubgeneroCB().setModel(new DefaultComboBoxModel<>());
 			}
@@ -114,9 +127,13 @@ public class LlenarCombosSearchController {
 		configurarRelacion(vista.getPaisCB(), () -> {
 			Pais padre = (Pais) vista.getPaisCB().getSelectedItem();
 			if (padre != null && padre.getId() != null) {
-				List<Region> hijos = regionService.findByPaisId(padre.getId());
-				vista.getRegionCB().setModel(UIUtils.crearModelo(hijos, new Region(null, "Seleccionar")));
-				vista.getCiudadCB().setModel(new DefaultComboBoxModel<>()); // Limpiar nieto
+				try {
+					List<Region> hijos = regionService.findByPaisId(padre.getId());
+					vista.getRegionCB().setModel(UIUtils.crearModelo(hijos, new Region(null, "Seleccionar")));
+					vista.getCiudadCB().setModel(new DefaultComboBoxModel<>()); // Limpiar nieto
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(vista, "No fue posible cargar regiones: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				vista.getRegionCB().setModel(new DefaultComboBoxModel<>());
 				vista.getCiudadCB().setModel(new DefaultComboBoxModel<>());
@@ -127,8 +144,12 @@ public class LlenarCombosSearchController {
 		configurarRelacion(vista.getRegionCB(), () -> {
 			Region padre = (Region) vista.getRegionCB().getSelectedItem();
 			if (padre != null && padre.getId() != null) {
-				List<Ciudad> hijos = ciudadService.findByRegionId(padre.getId());
-				vista.getCiudadCB().setModel(UIUtils.crearModelo(hijos, new Ciudad(null, "Seleccionar")));
+				try {
+					List<Ciudad> hijos = ciudadService.findByRegionId(padre.getId());
+					vista.getCiudadCB().setModel(UIUtils.crearModelo(hijos, new Ciudad(null, "Seleccionar")));
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(vista, "No fue posible cargar ciudades: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			} else {
 				vista.getCiudadCB().setModel(new DefaultComboBoxModel<>());
 			}

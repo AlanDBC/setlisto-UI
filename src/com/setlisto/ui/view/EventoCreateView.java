@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
@@ -33,6 +34,7 @@ import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 
 import com.setlisto.model.Artista;
+import com.setlisto.model.EventZone;
 import com.setlisto.model.EventoMusicalDTO;
 import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.LugarDTO;
@@ -500,6 +502,8 @@ public class EventoCreateView extends AbstractView {
 
 		setAllRenderers();
 		setAllControllers();
+		
+		capacidadTF.setEnabled(false);
 	}
 
 	private void setFormats() {
@@ -617,8 +621,36 @@ public class EventoCreateView extends AbstractView {
 		// 6. Sincronización de listas (UI -> DTO) usando el Mapper
 		// El mapper encapsula la extracción y asignación de Géneros, Subgéneros y Artistas
 		mapper.mapUItoDTO(em, generosModel, subgenerosModel, artistasModel);
+		em.setZonas(mapZonasToDTO());
 
 		return em;
+	}
+
+	private List<EventZone> mapZonasToDTO() {
+		List<EventZone> zonas = new ArrayList<EventZone>();
+		if (zonasConfiguradas == null) {
+			return zonas;
+		}
+		for (ZonaConfigurada zonaConfigurada : zonasConfiguradas) {
+			if (zonaConfigurada == null || zonaConfigurada.getCategoria() == null || zonaConfigurada.getCategoria().getId() == null) {
+				continue;
+			}
+			EventZone zona = new EventZone();
+			Rectangle area = zonaConfigurada.getArea();
+			zona.setSeatCategoryId(zonaConfigurada.getCategoria().getId());
+			zona.setSectionName(zonaConfigurada.getSeccion());
+			zona.setTotalCapacity(zonaConfigurada.getCantidad());
+			zona.setAvailableCapacity(zonaConfigurada.getCantidad());
+			zona.setBasePrice(zonaConfigurada.getPrecio());
+			if (area != null) {
+				zona.setPosX(area.x);
+				zona.setPosY(area.y);
+				zona.setWidth(area.width);
+				zona.setHeight(area.height);
+			}
+			zonas.add(zona);
+		}
+		return zonas;
 	}
 
 	/**
@@ -651,9 +683,14 @@ public class EventoCreateView extends AbstractView {
 
 	private void setAllControllers() {
 		// Instancias el controlador de relación (que gestiona la lógica entre las dos listas)
-		List<SubGeneroMusicalDTO> subgeneros = subgeneroService.findAll();
+		List<SubGeneroMusicalDTO> subgeneros = new ArrayList<SubGeneroMusicalDTO>();
+		try {
+			subgeneros = subgeneroService.findAll();
+		} catch (Exception e) {
+			subgeneros = new ArrayList<SubGeneroMusicalDTO>();
+		}
 		relacionGeneroSubgeneroController = new RelacionGeneroSubgeneroController(generosModel, subgenerosModel, subgeneros);
-
+ 
 		// Conecta la lista de géneros con su controlador y le pasa el de relación
 		ListaSeleccionableController<GeneroMusical> listaGenerosController = new ListaSeleccionableController<GeneroMusical>(generosList, generosModel, relacionGeneroSubgeneroController);
 
@@ -703,6 +740,16 @@ public class EventoCreateView extends AbstractView {
 		} else {
 			lugarSeleccionadoLabel.setForeground(Color.WHITE);
 			zonaHorariaSeleccionadaLabel.setForeground(Color.WHITE);
+		}
+
+		if (zonasConfiguradas != null) {
+			for (ZonaConfigurada zona : zonasConfiguradas) {
+				if (zona.getCategoria() == null || zona.getCategoria().getId() == null || zona.getCantidad() <= 0 || zona.getPrecio() == null) {
+					asientosConfiguradosLabel.setForeground(Color.RED);
+					valido = false;
+					break;
+				}
+			}
 		}
 
 		return valido;
@@ -778,7 +825,19 @@ public class EventoCreateView extends AbstractView {
 
 	public void setZonasConfiguradas(List<ZonaConfigurada> zonas) {
 		this.zonasConfiguradas = zonas;
-		configPlazasButton.setText("Plazas Config. (" + zonas.size() + ")");
+		int totalAsientos = 0;
+		if (zonas != null) {
+			for (ZonaConfigurada zona : zonas) {
+				totalAsientos += zona.getCantidad();
+			}
+		}
+		configPlazasButton.setText("Plazas Config. (" + totalAsientos + ")");
+		asientosConfiguradosLabel.setText(totalAsientos > 0 ? totalAsientos + " plazas configuradas" : "(sin configurar)");
+		asientosConfiguradosLabel.setForeground(Color.BLACK);
+		
+		if (totalAsientos > 0) {
+		    capacidadTF.setText(String.valueOf(totalAsientos));
+		}
 	}
 
 	public List<ZonaConfigurada> getZonasConfiguradas() {

@@ -45,23 +45,39 @@ public class EventoCreateController extends AbstractController {
 	}
 
 	private void initialize() {
-		List<GeneroMusical> generos = generoService.findAll();
-		this.generoSeleccionable.cargarItems(generos);
-		view.setGenerosListModel(generoSeleccionable);
-				
-		List<Artista> artistas = artistaService.findAll();
-		this.artistaSeleccionable.cargarItems(artistas);
-		view.setArtistasListModel(artistaSeleccionable);
+		try {
+			List<GeneroMusical> generos = generoService.findAll();
+			this.generoSeleccionable.cargarItems(generos);
+			view.setGenerosListModel(generoSeleccionable);
+					
+			List<Artista> artistas = artistaService.findAll();
+			this.artistaSeleccionable.cargarItems(artistas);
+			view.setArtistasListModel(artistaSeleccionable);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(view, "No fue posible inicializar el formulario: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
 	public void doAction() {
 		// Validar campos del formulario, si no son validos, marcar los campos en rojo y mostrar un mensaje de error
 		boolean ok = view.validarCampos();
-		
+		if (!ok) {
+			JOptionPane.showMessageDialog(view, "Revisa los campos marcados antes de crear el evento.", "Validacion", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		
 		EventoMusicalDTO evento = view.getEvento();
-		EventoMusicalDTO creado = eventoService.create(evento);
+		if (evento == null) {
+			return;
+		}
+		EventoMusicalDTO creado = null;
+		try {
+			creado = eventoService.create(evento);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(view, "No fue posible crear el evento: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		// view... dependiendo de el exito o no de la operacion, se muestra un mensaje y se limpia el formulario
 		// JoptionPane informando de la insercion
 		

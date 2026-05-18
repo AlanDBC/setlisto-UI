@@ -54,10 +54,14 @@ public class ClienteViewController extends AbstractController implements ActionL
 
 	@Override
 	public void doAction() {
-		ClienteCriteria criteria = view.getCriteria();
-		Results<Cliente> clientes = clienteService.findByCriteria(criteria, 0, 100);
-		List<Cliente> list = clientes == null ? null : clientes.getPage();
-		view.setResults(list);
+		try {
+			ClienteCriteria criteria = view.getCriteria();
+			Results<Cliente> clientes = clienteService.findByCriteria(criteria, 0, 100);
+			List<Cliente> list = clientes == null ? null : clientes.getPage();
+			view.setResults(list);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(view, "No fue posible buscar clientes: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	public Action getNuevoAction() {
@@ -107,8 +111,12 @@ public class ClienteViewController extends AbstractController implements ActionL
 						"Confirmar eliminacion",
 						JOptionPane.YES_NO_OPTION);
 				if (option == JOptionPane.YES_OPTION) {
-					clienteService.delete(seleccionado.getId());
-					doAction();
+					try {
+						clienteService.delete(seleccionado.getId());
+						doAction();
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(view, "No fue posible eliminar el cliente: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		};
@@ -124,8 +132,12 @@ public class ClienteViewController extends AbstractController implements ActionL
 				if (seleccionado == null) {
 					return;
 				}
-				clienteService.setActive(!Boolean.TRUE.equals(seleccionado.getActivo()), seleccionado.getId());
-				doAction();
+				try {
+					clienteService.setActive(!Boolean.TRUE.equals(seleccionado.getActivo()), seleccionado.getId());
+					doAction();
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(view, "No fue posible cambiar el estado del cliente: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		};
 	}
@@ -140,8 +152,12 @@ public class ClienteViewController extends AbstractController implements ActionL
 				if (seleccionado == null) {
 					return;
 				}
-				clienteService.setVerify(!Boolean.TRUE.equals(seleccionado.getVerificado()), seleccionado.getId());
-				doAction();
+				try {
+					clienteService.setVerify(!Boolean.TRUE.equals(seleccionado.getVerificado()), seleccionado.getId());
+					doAction();
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(view, "No fue posible cambiar la verificacion del cliente: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		};
 	}

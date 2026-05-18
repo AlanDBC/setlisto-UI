@@ -39,10 +39,15 @@ public class LoginController extends AbstractController implements ActionListene
 
 		Object usuarioLogueado = null; // Usamos Object para que pueda ser Cliente u Organizador
 
-		if (esOrganizador) {
-			usuarioLogueado = organizadorService.login(correo, contrasena);
-		} else {
-			usuarioLogueado = clienteService.login(correo, contrasena);
+		try {
+			if (esOrganizador) {
+				usuarioLogueado = organizadorService.login(correo, contrasena);
+			} else {
+				usuarioLogueado = clienteService.login(correo, contrasena);
+			}
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(LoginWindow.getInstance(), "No fue posible iniciar sesion: " + ex.getMessage(), "Error de Login", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 
 		if (usuarioLogueado != null) {

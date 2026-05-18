@@ -39,7 +39,13 @@ public class LugarCreateController extends AbstractController {
 					);
 			return;
 		}
-		Lugar creado = service.create(lgr);
+		Lugar creado = null;
+		try {
+			creado = service.create(lgr);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(view, "No fue posible crear el lugar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 
 		if (creado != null) {
 
@@ -54,9 +60,12 @@ public class LugarCreateController extends AbstractController {
 			// Limpiamos los campos mientras el usuario cierra el diálogo
 			view.limpiarCampos();
 			
-			LugarDTO lgrDto = service.findById(creado.getId());
-			
-			view.setLugarSeleccionado(lgrDto); // dentro de este metodo se pasa el nombre a el label
+			try {
+				LugarDTO lgrDto = service.findById(creado.getId());
+				view.setLugarSeleccionado(lgrDto); // dentro de este metodo se pasa el nombre a el label
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(view, "El lugar fue creado, pero no se pudo recargar: " + ex.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+			}
 
 		} else {
 			// Mostramos el mensaje de error
