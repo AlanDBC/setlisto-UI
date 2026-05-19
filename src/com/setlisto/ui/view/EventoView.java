@@ -5,11 +5,14 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseListener;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -24,27 +27,44 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
+import com.setlisto.model.Artista;
 import com.setlisto.model.EstadoEvento;
 import com.setlisto.model.EventoMusicalDTO;
+import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.Organizador;
+import com.setlisto.model.SubGeneroMusical;
+import com.setlisto.model.SubGeneroMusicalDTO;
 import com.setlisto.model.SubTipoEventoDTO;
 import com.setlisto.model.TipoEvento;
+import com.setlisto.service.ArtistaService;
 import com.setlisto.service.EstadoEventoService;
 import com.setlisto.service.EventoMusicalService;
+import com.setlisto.service.GeneroMusicalService;
 import com.setlisto.service.OrganizadorService;
+import com.setlisto.service.SubGeneroMusicalService;
 import com.setlisto.service.SubTipoEventoService;
 import com.setlisto.service.TipoEventoService;
+import com.setlisto.service.impl.ArtistaServiceImpl;
 import com.setlisto.service.impl.EstadoEventoServiceImpl;
 import com.setlisto.service.impl.EventoMusicalServiceImpl;
+import com.setlisto.service.impl.GeneroMusicalServiceImpl;
 import com.setlisto.service.impl.OrganizadorServiceImpl;
+import com.setlisto.service.impl.SubGeneroMusicalServiceImpl;
 import com.setlisto.service.impl.SubTipoEventoServiceImpl;
 import com.setlisto.service.impl.TipoEventoServiceImpl;
+import com.setlisto.ui.controller.AbrirReservaController;
+import com.setlisto.ui.controller.ListaSeleccionableController;
+import com.setlisto.ui.controller.RelacionGeneroSubgeneroController;
 import com.setlisto.ui.filters.HorasDF;
 import com.setlisto.ui.main.MainWindow;
+import com.setlisto.ui.mapper.EventoMusicalMapper;
 import com.setlisto.ui.renderer.EstadoCBRenderer;
+import com.setlisto.ui.renderer.ItemSeleccionableRenderer;
+import com.setlisto.ui.renderer.NamedListCellRenderer;
 import com.setlisto.ui.renderer.OrganizadorCBRenderer;
 import com.setlisto.ui.renderer.SubtipoEventoCBRenderer;
 import com.setlisto.ui.renderer.TipoEventoCBRenderer;
+import com.setlisto.ui.selectable.ListSeleccionableModel;
 import com.setlisto.ui.utils.UIUtils;
 import com.toedter.calendar.JDateChooser;
 
@@ -82,6 +102,16 @@ public class EventoView extends AbstractView {
 	private EstadoEventoService estadoService = new EstadoEventoServiceImpl();
 	private TipoEventoService tipoService = new TipoEventoServiceImpl();
 	private SubTipoEventoService subtipoService = new SubTipoEventoServiceImpl();
+	private GeneroMusicalService generoService = new GeneroMusicalServiceImpl();
+	private SubGeneroMusicalService subgeneroService = new SubGeneroMusicalServiceImpl();
+	private ArtistaService artistaService = new ArtistaServiceImpl();
+	private EventoMusicalMapper mapper = new EventoMusicalMapper();
+	private ListSeleccionableModel<GeneroMusical> generosModel;
+	private ListSeleccionableModel<SubGeneroMusical> subgenerosModel;
+	private ListSeleccionableModel<Artista> artistasModel;
+	private MouseListener generosMouseListener;
+	private MouseListener subgenerosMouseListener;
+	private MouseListener artistasMouseListener;
 
 	public EventoView() {
 		initialize();
@@ -151,6 +181,9 @@ public class EventoView extends AbstractView {
 		estadoCB.setRenderer(new EstadoCBRenderer());
 		tipoCB.setRenderer(new TipoEventoCBRenderer());
 		subtipoCB.setRenderer(new SubtipoEventoCBRenderer());
+		generosList.setCellRenderer(new NamedListCellRenderer());
+		subgenerosList.setCellRenderer(new NamedListCellRenderer());
+		artistasList.setCellRenderer(new NamedListCellRenderer());
 
 		volverButton.addActionListener(e -> MainWindow.getInstance().removeTab(this));
 		editarButton.addActionListener(e -> {
@@ -161,11 +194,8 @@ public class EventoView extends AbstractView {
 				editarButton.setText("Guardar");
 			}
 		});
-		reservarButton.addActionListener(e -> {
-			if (model != null) {
-				MainWindow.getInstance().addTab(new ReservaView(model));
-			}
-		});
+
+		reservarButton.setAction(new AbrirReservaController(this));
 
 		setEditable(false);
 	}
@@ -190,6 +220,10 @@ public class EventoView extends AbstractView {
 		cargarCombos(em);
 	}
 
+	public EventoMusicalDTO getModel() {
+		return this.model;
+	}
+
 	public void setEditable(boolean editable) {
 		this.editable = editable;
 		nombreTF.setEditable(editable);
@@ -202,6 +236,104 @@ public class EventoView extends AbstractView {
 		horaInicioFTF.setEditable(editable);
 		fechaFinDC.setEnabled(editable);
 		horaFinFTF.setEditable(editable);
+		generosList.setEnabled(editable);
+		subgenerosList.setEnabled(editable);
+		artistasList.setEnabled(editable);
+		if (model != null) {
+			if (editable) {
+				activarListasEditables();
+			} else {
+				mostrarListasDetalle();
+			}
+		}
+	}
+
+	private void mostrarListasDetalle() {
+		desconectarListasEditables();
+		generosList.setCellRenderer(new NamedListCellRenderer());
+		subgenerosList.setCellRenderer(new NamedListCellRenderer());
+		artistasList.setCellRenderer(new NamedListCellRenderer());
+		generosList.setListData(model.getGeneros() != null ? model.getGeneros().toArray() : new Object[0]);
+		subgenerosList.setListData(model.getSubGeneros() != null ? model.getSubGeneros().toArray() : new Object[0]);
+		artistasList.setListData(model.getArtistas() != null ? model.getArtistas().toArray() : new Object[0]);
+	}
+
+	private void activarListasEditables() {
+		try {
+			desconectarListasEditables();
+			generosModel = new ListSeleccionableModel<GeneroMusical>();
+			subgenerosModel = new ListSeleccionableModel<SubGeneroMusical>();
+			artistasModel = new ListSeleccionableModel<Artista>();
+
+			List<SubGeneroMusicalDTO> subgeneros = subgeneroService.findAll();
+			generosModel.cargarItems(generoService.findAll());
+			artistasModel.cargarItems(artistaService.findAll());
+
+			marcarGeneros(model.getGeneros());
+			RelacionGeneroSubgeneroController relacion = new RelacionGeneroSubgeneroController(generosModel, subgenerosModel, subgeneros);
+			relacion.actualizarDependencias();
+			marcarSubgeneros(model.getSubGeneros());
+			marcarArtistas(model.getArtistas());
+
+			generosList.setModel(generosModel);
+			subgenerosList.setModel(subgenerosModel);
+			artistasList.setModel(artistasModel);
+			generosList.setCellRenderer(new ItemSeleccionableRenderer());
+			subgenerosList.setCellRenderer(new ItemSeleccionableRenderer());
+			artistasList.setCellRenderer(new ItemSeleccionableRenderer());
+
+			generosMouseListener = new ListaSeleccionableController<GeneroMusical>(generosList, generosModel, relacion);
+			subgenerosMouseListener = new ListaSeleccionableController<SubGeneroMusical>(subgenerosList, subgenerosModel, null);
+			artistasMouseListener = new ListaSeleccionableController<Artista>(artistasList, artistasModel, null);
+			generosList.addMouseListener(generosMouseListener);
+			subgenerosList.addMouseListener(subgenerosMouseListener);
+			artistasList.addMouseListener(artistasMouseListener);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, "No fue posible preparar las listas editables: " + ex.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void desconectarListasEditables() {
+		if (generosMouseListener != null) {
+			generosList.removeMouseListener(generosMouseListener);
+			generosMouseListener = null;
+		}
+		if (subgenerosMouseListener != null) {
+			subgenerosList.removeMouseListener(subgenerosMouseListener);
+			subgenerosMouseListener = null;
+		}
+		if (artistasMouseListener != null) {
+			artistasList.removeMouseListener(artistasMouseListener);
+			artistasMouseListener = null;
+		}
+	}
+
+	private void marcarGeneros(List<GeneroMusical> generos) {
+		if (generos == null) {
+			return;
+		}
+		for (GeneroMusical genero : generos) {
+			generosModel.marcarItem(genero);
+		}
+	}
+
+	private void marcarSubgeneros(List<SubGeneroMusical> subgeneros) {
+		if (subgeneros == null) {
+			return;
+		}
+		for (SubGeneroMusical subgenero : subgeneros) {
+			subgenerosModel.marcarItem(subgenero);
+		}
+	}
+
+	private void marcarArtistas(List<Artista> artistas) {
+		if (artistas == null) {
+			return;
+		}
+		for (Artista artista : artistas) {
+			artistasModel.marcarItem(artista);
+		}
 	}
 
 	private void cargarCombos(EventoMusicalDTO em) {
@@ -247,6 +379,9 @@ public class EventoView extends AbstractView {
 			if (org != null) model.setIdOrganizador(org.getId());
 			if (estado != null) model.setIdEstado(estado.getId());
 			if (subtipo != null) model.setIdSubtipo(subtipo.getId());
+			if (generosModel != null && subgenerosModel != null && artistasModel != null) {
+				mapper.mapUItoDTO(model, generosModel, subgenerosModel, artistasModel);
+			}
 			eventoService.update(model);
 			setModel(eventoService.findById(model.getId()));
 			setEditable(false);

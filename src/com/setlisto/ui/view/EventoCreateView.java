@@ -115,6 +115,7 @@ public class EventoCreateView extends AbstractView {
 	private Component verticalStrut_3;
 	private Component verticalStrut_4;
 	private List<ZonaConfigurada> zonasConfiguradas;
+	private String rutaImagenPlano;
 	private JLabel zonaHorariaLabel;
 	private JLabel zonaHorariaSeleccionadaLabel;
 	private JButton configPlazasButton;
@@ -576,6 +577,7 @@ public class EventoCreateView extends AbstractView {
 		subgenerosList.clearSelection();
 		artistasList.clearSelection();
 
+		rutaImagenPlano = null;
 		setLugarSeleccionado(null);
 	}
 
@@ -622,6 +624,7 @@ public class EventoCreateView extends AbstractView {
 		// El mapper encapsula la extracción y asignación de Géneros, Subgéneros y Artistas
 		mapper.mapUItoDTO(em, generosModel, subgenerosModel, artistasModel);
 		em.setZonas(mapZonasToDTO());
+		em.setRutaImagenPlano(rutaImagenPlano);
 
 		return em;
 	}
@@ -842,5 +845,13 @@ public class EventoCreateView extends AbstractView {
 
 	public List<ZonaConfigurada> getZonasConfiguradas() {
 		return this.zonasConfiguradas;
+	}
+
+	public String getRutaImagenPlano() {
+		return rutaImagenPlano;
+	}
+
+	public void setRutaImagenPlano(String rutaImagenPlano) {
+		this.rutaImagenPlano = rutaImagenPlano;
 	}
 }

@@ -29,6 +29,4 @@ public class AbrirLugarSelectController extends AbstractController implements Ac
         doAction();
 	}
 	
-	
-
 }

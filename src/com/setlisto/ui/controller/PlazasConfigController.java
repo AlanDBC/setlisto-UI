@@ -26,8 +26,6 @@ public class PlazasConfigController extends AbstractController implements MouseL
 	public void doAction() {	
 	}
 
-	
-
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// [Inicio del Rectángulo] Captura la coordenada inicial (X, Y)

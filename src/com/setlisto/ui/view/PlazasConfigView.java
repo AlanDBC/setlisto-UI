@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.File;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.imageio.ImageIO;
 
 import com.setlisto.model.CategoriaAsiento;
 import com.setlisto.ui.controller.AdjuntarImagenButtonController;
@@ -42,6 +44,7 @@ public class PlazasConfigView extends JDialog {
 	private ZonaConfigurada zonaActual;
 	private EventoCreateView receptor;
 	private JLabel seccionSelectLabel;
+	private String rutaImagenPlano;
 	
 	// Bandera añadida para evitar sobrescrituras de eventos al cambiar de zonas
 	private boolean isUpdating = false;
@@ -51,6 +54,7 @@ public class PlazasConfigView extends JDialog {
 		setName("Configurar Asientos"); 
 		initialize();
 		postInitialize();
+		cargarEstadoReceptor();
 	}
 
 	private void initialize() {
@@ -185,6 +189,30 @@ public class PlazasConfigView extends JDialog {
 
 	public PlazasMapaPanel getMapaPanel() {
 		return mapaPanel;
+	}
+
+	private void cargarEstadoReceptor() {
+		if (receptor.getZonasConfiguradas() != null) {
+			mapaPanel.setZonas(receptor.getZonasConfiguradas());
+		}
+		setRutaImagenPlano(receptor.getRutaImagenPlano());
+	}
+
+	public String getRutaImagenPlano() {
+		return rutaImagenPlano;
+	}
+
+	public void setRutaImagenPlano(String rutaImagenPlano) {
+		this.rutaImagenPlano = rutaImagenPlano;
+		if (rutaImagenPlano == null || rutaImagenPlano.trim().isEmpty()) {
+			mapaPanel.setBackgroundImage(null);
+			return;
+		}
+		try {
+			mapaPanel.setBackgroundImage(ImageIO.read(new File(rutaImagenPlano)));
+		} catch (Exception ignored) {
+			mapaPanel.setBackgroundImage(null);
+		}
 	}
 
 	public void setRightPanelActive(boolean active) {

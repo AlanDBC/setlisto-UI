@@ -31,6 +31,7 @@ public class AdjuntarImagenButtonController extends AbstractController implement
 			try {
 				BufferedImage img = ImageIO.read(chooser.getSelectedFile());
 				view.getMapaPanel().setBackgroundImage(img);
+				view.setRutaImagenPlano(chooser.getSelectedFile().getAbsolutePath());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

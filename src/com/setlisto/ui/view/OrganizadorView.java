@@ -125,6 +125,14 @@ public class OrganizadorView extends AbstractView {
 
 	private void postInitialize() {
 		OrganizadorViewController controller = new OrganizadorViewController(this);
+		nombreComercialTF.addKeyListener(controller);
+		emailTF.addKeyListener(controller);
+		telefonoTF.addKeyListener(controller);
+		nombreTF.addKeyListener(controller);
+		apellido1TF.addKeyListener(controller);
+		verificadoCB.addItemListener(controller);
+		nacimientoDesdeDC.addPropertyChangeListener("date", controller);
+		nacimientoHastaDC.addPropertyChangeListener("date", controller);
 		buscarButton.setAction(controller);
 		nuevoButton.setAction(controller.getNuevoAction());
 		editarButton.setAction(controller.getEditarAction());

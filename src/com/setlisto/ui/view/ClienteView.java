@@ -1,6 +1,7 @@
 package com.setlisto.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -140,7 +141,15 @@ public class ClienteView extends AbstractView {
 
 	private void postInitialize() {
 		ClienteViewController controller = new ClienteViewController(this);
-		// filtrado en tiempo real para componentes de búsqueda TODO
+		// filtrado en tiempo real para componentes de busqueda
+		emailTF.addKeyListener(controller);
+		telefonoTF.addKeyListener(controller);
+		nombreTF.addKeyListener(controller);
+		apellidoTF.addKeyListener(controller);
+		activoCB.addItemListener(controller);
+		verificadoCB.addItemListener(controller);
+		registroDesdeDC.addPropertyChangeListener("date", controller);
+		registroHastaDC.addPropertyChangeListener("date", controller);
 		buscarButton.setAction(controller);
 		refrescarButton.setAction(controller);
 		nuevoButton.setAction(controller.getNuevoAction());
@@ -207,7 +216,7 @@ public class ClienteView extends AbstractView {
 		return textField;
 	}
 
-	private void addComponent(JPanel panel, java.awt.Component component, int gridx, int gridy) {
+	private void addComponent(JPanel panel, Component component, int gridx, int gridy) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(0, 0, 5, 5);

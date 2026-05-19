@@ -131,7 +131,6 @@ public class LoginWindow extends JFrame {
 	    this.setResizable(false);
 
 	    // Establece el tamaño exacto 
-
 	    this.setSize(400, 350); 
 
 	    // Centrar la ventana en la pantalla

@@ -57,10 +57,10 @@ public class PlazasMapaPanel extends AbstractView {
             g2.setColor(Color.WHITE); // Texto visible
             g2.drawString(zona.getSeccion(), r.x + 5, r.y + 15);
             if (zona.getPrecio() != null) {
-                g2.drawString(zona.getPrecio().toPlainString(), r.x + 5, r.y + 30);
+                g2.drawString("Precio: " + zona.getPrecio().toPlainString(), r.x + 5, r.y + 30);
             }
             if (zona.getDisponibles() != null) {
-                g2.drawString("Disp: " + zona.getDisponibles(), r.x + 5, r.y + 45);
+                g2.drawString("Disponibles: " + zona.getDisponibles(), r.x + 5, r.y + 45);
             }
         }
 

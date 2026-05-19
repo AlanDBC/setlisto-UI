@@ -32,7 +32,7 @@ public class ListSeleccionableModel<T> extends DefaultListModel<ItemSeleccionabl
 	public void marcarItem(T valor) {
 		for (int i = 0; i < getSize(); i++) {
 			ItemSeleccionable<T> item = getElementAt(i);
-			if (item.getValor().equals(valor)) {
+			if (sameValue(item.getValor(), valor)) {
 				item.setSeleccionado(true);
 				// Notifica a la vista que este elemento cambió
 				fireContentsChanged(this, i, i);
@@ -47,7 +47,7 @@ public class ListSeleccionableModel<T> extends DefaultListModel<ItemSeleccionabl
 	public void desmarcarItem(T valor) {
 		for (int i = 0; i < getSize(); i++) {
 			ItemSeleccionable<T> item = getElementAt(i);
-			if (item.getValor().equals(valor)) {
+			if (sameValue(item.getValor(), valor)) {
 				item.setSeleccionado(false);
 				fireContentsChanged(this, i, i);
 				break;
@@ -97,5 +97,29 @@ public class ListSeleccionableModel<T> extends DefaultListModel<ItemSeleccionabl
 	 */
 	public ItemSeleccionable<T> getItem(int index) {
 		return getElementAt(index);
+	}
+
+	private boolean sameValue(T left, T right) {
+		if (left == right) {
+			return true;
+		}
+		if (left == null || right == null) {
+			return false;
+		}
+		Long leftId = getId(left);
+		Long rightId = getId(right);
+		if (leftId != null && rightId != null) {
+			return leftId.equals(rightId);
+		}
+		return left.equals(right);
+	}
+
+	private Long getId(Object value) {
+		try {
+			Object id = value.getClass().getMethod("getId").invoke(value);
+			return id instanceof Long ? (Long) id : null;
+		} catch (Exception ignored) {
+			return null;
+		}
 	}
 }

@@ -18,7 +18,6 @@ public class CancelarLugarSeleccionadoController extends AbstractController impl
 	private EventoCreateView receptor;
 
 	public CancelarLugarSeleccionadoController(LugarSelectView view, EventoCreateView receptor) {
-		// icon: 1250_delete_delete.png
 		super("Cancelar", new ImageIcon(EventoCreateView.class.getResource("/nuvola/16x16/1250_delete_delete.png")));
 		this.view = view;
 		this.receptor = receptor;

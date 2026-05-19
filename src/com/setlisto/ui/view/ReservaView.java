@@ -7,9 +7,11 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -99,9 +101,23 @@ public class ReservaView extends AbstractView {
 				configuradas.add(zc);
 			}
 			mapaPanel.setZonas(configuradas);
+			cargarImagenPlano();
 			mapaPanel.repaint();
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, "No fue posible cargar las zonas: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void cargarImagenPlano() {
+		String rutaImagen = evento.getRutaImagenPlano();
+		if (rutaImagen == null || rutaImagen.trim().isEmpty()) {
+			mapaPanel.setBackgroundImage(null);
+			return;
+		}
+		try {
+			mapaPanel.setBackgroundImage(ImageIO.read(new File(rutaImagen)));
+		} catch (Exception ignored) {
+			mapaPanel.setBackgroundImage(null);
 		}
 	}
 
@@ -114,7 +130,8 @@ public class ReservaView extends AbstractView {
 			if (zona.getArea() != null && zona.getArea().contains(e.getPoint())) {
 				zonaSeleccionada = zona;
 				mapaPanel.setZonaSeleccionada(zona);
-				zonaSeleccionadaLabel.setText(zona.getSeccion() + " - disp. " + zona.getDisponibles() + " - " + zona.getPrecio());
+				zonaSeleccionadaLabel.setText(zona.getSeccion() + " - precio: " + zona.getPrecio()
+						+ " - disponibilidad: " + zona.getDisponibles());
 				return;
 			}
 		}

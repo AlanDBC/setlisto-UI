@@ -19,6 +19,7 @@ public class AceptarPlazasButtonController extends AbstractController {
     public void doAction() {
         // Enviar la lista de zonas mapeadas al formulario de creación del evento
         receptor.setZonasConfiguradas(view.getMapaPanel().getZonas());
+        receptor.setRutaImagenPlano(view.getRutaImagenPlano());
         // Cerrar el JDialog
         view.dispose();
     }
