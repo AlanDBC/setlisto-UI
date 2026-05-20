@@ -13,7 +13,9 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
@@ -28,6 +30,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
+import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -38,11 +41,11 @@ import com.setlisto.model.EstadoEvento;
 import com.setlisto.model.EventoMusicalDTO;
 import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.Pais;
+import com.setlisto.model.Region;
 import com.setlisto.model.SubGeneroMusicalDTO;
 import com.setlisto.model.SubTipoEventoDTO;
 import com.setlisto.model.TipoEvento;
 import com.setlisto.model.ZonaHoraria;
-import com.setlisto.model.Region;
 import com.setlisto.service.CiudadService;
 import com.setlisto.service.EventoMusicalService;
 import com.setlisto.service.GeneroMusicalService;
@@ -125,7 +128,7 @@ public class AdminEventoSearchView extends AbstractView {
 	 * Create the panel.
 	 */
 	public AdminEventoSearchView() {
-//		initServices(); 
+		//		initServices(); 
 		initialize();
 		postInitialize();
 		setName("Buscar Eventos Musicales");
@@ -143,7 +146,7 @@ public class AdminEventoSearchView extends AbstractView {
 		gbl_busquedaPanel.columnWeights = new double[]{0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
 		gbl_busquedaPanel.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		busquedaPanel.setLayout(gbl_busquedaPanel);
-		
+
 		verticalStrut_1 = Box.createVerticalStrut(20);
 		GridBagConstraints gbc_verticalStrut_1 = new GridBagConstraints();
 		gbc_verticalStrut_1.insets = new Insets(0, 0, 5, 5);
@@ -320,7 +323,7 @@ public class AdminEventoSearchView extends AbstractView {
 		gbc_estadoLabel.gridx = 10;
 		gbc_estadoLabel.gridy = 3;
 		busquedaPanel.add(estadoLabel, gbc_estadoLabel);
-		
+
 		zonaHorariaLabel = new JLabel("Zona Horaria");
 		GridBagConstraints gbc_zonaHorariaLabel = new GridBagConstraints();
 		gbc_zonaHorariaLabel.insets = new Insets(0, 0, 5, 5);
@@ -384,7 +387,7 @@ public class AdminEventoSearchView extends AbstractView {
 		gbc_estadoCB.gridx = 10;
 		gbc_estadoCB.gridy = 4;
 		busquedaPanel.add(estadoCB, gbc_estadoCB);
-		
+
 		zonaHorariaCB = new JComboBox();
 		GridBagConstraints gbc_zonaHorariaCB = new GridBagConstraints();
 		gbc_zonaHorariaCB.insets = new Insets(0, 0, 5, 5);
@@ -392,14 +395,14 @@ public class AdminEventoSearchView extends AbstractView {
 		gbc_zonaHorariaCB.gridx = 11;
 		gbc_zonaHorariaCB.gridy = 4;
 		busquedaPanel.add(zonaHorariaCB, gbc_zonaHorariaCB);
-		
+
 		horizontalStrut_1 = Box.createHorizontalStrut(20);
 		GridBagConstraints gbc_horizontalStrut_1 = new GridBagConstraints();
 		gbc_horizontalStrut_1.insets = new Insets(0, 0, 5, 0);
 		gbc_horizontalStrut_1.gridx = 13;
 		gbc_horizontalStrut_1.gridy = 4;
 		busquedaPanel.add(horizontalStrut_1, gbc_horizontalStrut_1);
-		
+
 		horizontalStrut = Box.createHorizontalStrut(20);
 		GridBagConstraints gbc_horizontalStrut = new GridBagConstraints();
 		gbc_horizontalStrut.insets = new Insets(0, 0, 5, 5);
@@ -534,34 +537,34 @@ public class AdminEventoSearchView extends AbstractView {
 		gbc_limpiarButton.gridx = 12;
 		gbc_limpiarButton.gridy = 6;
 		busquedaPanel.add(limpiarButton, gbc_limpiarButton);
-		
+
 		verticalStrut = Box.createVerticalStrut(20);
 		GridBagConstraints gbc_verticalStrut = new GridBagConstraints();
 		gbc_verticalStrut.insets = new Insets(0, 0, 0, 5);
 		gbc_verticalStrut.gridx = 7;
 		gbc_verticalStrut.gridy = 7;
 		busquedaPanel.add(verticalStrut, gbc_verticalStrut);
-		
+
 		centerPanel = new JPanel();
 		add(centerPanel, BorderLayout.CENTER);
 		centerPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		resultadosTable = new JTable();
 		resultadosTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
 		JScrollPane scrollPane = new JScrollPane(resultadosTable);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		centerPanel.add(scrollPane);
-		
+
 		tableRightPanel = new JPanel();
 		centerPanel.add(tableRightPanel, BorderLayout.WEST);
-		
+
 		horizontalStrut_2 = Box.createHorizontalStrut(20);
 		tableRightPanel.add(horizontalStrut_2);
-		
+
 		leftTablePanel = new JPanel();
 		centerPanel.add(leftTablePanel, BorderLayout.EAST);
-		
+
 		horizontalStrut_3 = Box.createHorizontalStrut(20);
 		leftTablePanel.add(horizontalStrut_3);
 
@@ -580,73 +583,67 @@ public class AdminEventoSearchView extends AbstractView {
 		artistaTF.setEnabled(false);
 		lugarTF.setEnabled(false);
 		organizadorTF.setEnabled(false);
-		
+
 		setDocumentFilters();
 
 		setAllRenderers();		
 
-//		llenarCB();
-		
 		setModel(new ArrayList<EventoMusicalDTO>());
 
 		setControllers();
-		
-		AutoCompleteDecorator.decorate(paisCB, new PaisToStringConverter()); 
-		
-		
+
+		setAutoCompleteDecorators();
+
 		buscarButton.doClick(); // para que al abrir la vista ya se muestren resultados, aunque sea el resultado de una búsqueda sin criterios, para que no quede la vista vacía sin tabla ni nada
-		
 	}
 
-	/*private void initServices() {
-		estadoEventoService = new EstadoEventoServiceImpl();
-		subTipoEventoService = new SubTipoEventoServiceImpl();
-		subGeneroMusicalService = new SubGeneroMusicalServiceImpl();
-		tipoEventoService = new TipoEventoServiceImpl();
-		paisService = new PaisServiceImpl();
-		regionService= new RegionServiceImpl();
-		ciudadService = new CiudadServiceImpl();
-		eventoMusicalService = new EventoMusicalServiceImpl();
-		generoMusicalService = new GeneroMusicalServiceImpl();
-		zonaHorariaService = new ZonaHorariaServiceImpl();
+	private void setAutoCompleteDecorators() {
+		AutoCompleteDecorator.decorate(paisCB, new PaisToStringConverter());
+		AutoCompleteDecorator.decorate(generoCB, new GeneroToStringConverter());
+		AutoCompleteDecorator.decorate(tipoEventoCB, new TipoToStringConverter());
+//		AutoCompleteDecorator.decorate(subgeneroCB, new SubgeneroToStringConverter()); desactivados por que interfieren con el metodo de limpiar campos
+//		AutoCompleteDecorator.decorate(subtipoCB, new SubtipoToStringConverter());
+//		AutoCompleteDecorator.decorate(regionCB, new RegionToStringConverter());
+//		AutoCompleteDecorator.decorate(ciudadCB, new CiudadToStringConverter());
+		AutoCompleteDecorator.decorate(estadoCB, new EstadoEventoToStringConverter());
+		AutoCompleteDecorator.decorate(zonaHorariaCB, new ZonaHorariaToStringConverter());
 	}
-	*/
 
 	private void limpiarCampos() {
-		// Limpiar JTextFields
-		nombreTF.setText("");
-		artistaTF.setText("");
-		lugarTF.setText("");
-		organizadorTF.setText(""); 
-		// Limpiar JFormattedTextFields
-		idEventoFTF.setText("");
-		precioDesdeFTF.setText("");
-		precioHastaFTF.setText("");
-		capacidadDesdeFTF.setText("");
-		capacidadHastaFTF.setText("");
-		idArtistaFTF.setText("");
-		idOrganizadorFTF.setText("");
-		idLugarFTF.setText("");
-		// Limpiar JDateChoosers
-		fechaDesdeDC.setDate(null);
-		fechaHastaDC.setDate(null);	
-		// Resetear ComboBoxes (Al índice 0, que es "Seleccionar")
-		paisCB.setSelectedIndex(0);
-		generoCB.setSelectedIndex(0);
-		tipoEventoCB.setSelectedIndex(0);
-		// Para los ComboBoxes dependientes, limpiamos sus modelos para que no queden opciones que no correspondan al criterio actual 
-		// ni que salgan errores de out of bounds al setear el índice 0 después de haber cargado opciones dinámicamente
-		subgeneroCB.setModel(new DefaultComboBoxModel<>());
-		subtipoCB.setModel(new DefaultComboBoxModel<>());
-		regionCB.setModel(new DefaultComboBoxModel<>());
-		ciudadCB.setModel(new DefaultComboBoxModel<>());
-		// Limpiar el área de resultados
-		resultadosTable.setModel(new DefaultTableModel());
-		// Limpiar el label de total de resultados
-		totalResultadosLabel.setText("");
-		
-		// Volver a filtrar por nada, para que no quede la vista sin tabla
-		buscarButton.doClick();
+	    // Limpiar JTextFields
+	    nombreTF.setText("");
+	    artistaTF.setText("");
+	    lugarTF.setText("");
+	    organizadorTF.setText(""); 
+	    // Limpiar JFormattedTextFields
+	    idEventoFTF.setText("");
+	    precioDesdeFTF.setText("");
+	    precioHastaFTF.setText("");
+	    capacidadDesdeFTF.setText("");
+	    capacidadHastaFTF.setText("");
+	    idArtistaFTF.setText("");
+	    idOrganizadorFTF.setText("");
+	    idLugarFTF.setText("");
+	    // Limpiar JDateChoosers
+	    fechaDesdeDC.setDate(null);
+	    fechaHastaDC.setDate(null); 
+	    // Resetear ComboBoxes principales (Al índice 0, que es "Seleccionar")
+	    paisCB.setSelectedIndex(0);
+	    generoCB.setSelectedIndex(0);
+	    tipoEventoCB.setSelectedIndex(0);
+	    estadoCB.setSelectedIndex(0);
+	    zonaHorariaCB.setSelectedIndex(0);
+	    // Limpiar modelos de los hijos (ComboBoxes dependientes)
+	    subgeneroCB.setModel(new DefaultComboBoxModel<>());
+	    subtipoCB.setModel(new DefaultComboBoxModel<>());
+	    regionCB.setModel(new DefaultComboBoxModel<>());
+	    ciudadCB.setModel(new DefaultComboBoxModel<>());
+	    // Limpiar el área de resultados
+	    resultadosTable.setModel(new DefaultTableModel());
+	    // Limpiar el label de total de resultados
+	    totalResultadosLabel.setText("");
+	    // Volver a filtrar por nada
+	    buscarButton.doClick();
 	}
 
 	public EventoMusicalCriteria getCriteria() {
@@ -656,20 +653,20 @@ public class AdminEventoSearchView extends AbstractView {
 		criteria.setNombre(StringUtils.trimToNull(nombreTF.getText()));
 		criteria.setId(idEventoFTF.getText().isEmpty() ? null : Long.parseLong(idEventoFTF.getText()));
 		if (fechaDesdeDC.getDate() != null) {
-	        LocalDate fechaDesde = fechaDesdeDC.getDate().toInstant()
-	            .atZone(ZoneId.systemDefault())
-	            .toLocalDate();
-	        // Buscamos desde el primer segundo de ese día
-	        criteria.setFechaInicio(fechaDesde.atStartOfDay()); 
-	    }
+			LocalDate fechaDesde = fechaDesdeDC.getDate().toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDate();
+			// Buscamos desde el primer segundo de ese día
+			criteria.setFechaInicio(fechaDesde.atStartOfDay()); 
+		}
 
-	    if (fechaHastaDC.getDate() != null) {
-	        LocalDate fechaHasta = fechaHastaDC.getDate().toInstant()
-	            .atZone(ZoneId.systemDefault())
-	            .toLocalDate();
-	        // Buscamos hasta el último suspiro de ese día
-	        criteria.setFechaFin(fechaHasta.atTime(LocalTime.MAX)); 
-	    }
+		if (fechaHastaDC.getDate() != null) {
+			LocalDate fechaHasta = fechaHastaDC.getDate().toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDate();
+			// Buscamos hasta el último suspiro de ese día
+			criteria.setFechaFin(fechaHasta.atTime(LocalTime.MAX)); 
+		}
 		criteria.setPrecioDesde(precioDesdeFTF.getText().isEmpty() ? null : Integer.parseInt(precioDesdeFTF.getText()));
 		criteria.setPrecioHasta(precioHastaFTF.getText().isEmpty() ? null : Integer.parseInt(precioHastaFTF.getText()));
 		criteria.setCapacidadDesde(capacidadDesdeFTF.getText().isEmpty() ? null : Integer.parseInt(capacidadDesdeFTF.getText()));
@@ -702,13 +699,13 @@ public class AdminEventoSearchView extends AbstractView {
 		this.model = model;
 		updateView();
 	}
-	
+
 	public void updateView() {
 		EventoTableModel tableModel = new EventoTableModel(model);
 		resultadosTable.setModel(tableModel);
 		totalResultadosLabel.setText("Total de resultados: " + model.size());
 	}
-	
+
 	public void setDocumentFilters() {
 		((AbstractDocument) idEventoFTF.getDocument()).setDocumentFilter(new SoloNumerosDF());
 		((AbstractDocument) precioDesdeFTF.getDocument()).setDocumentFilter(new SoloNumerosDF());
@@ -719,7 +716,7 @@ public class AdminEventoSearchView extends AbstractView {
 		((AbstractDocument) idOrganizadorFTF.getDocument()).setDocumentFilter(new SoloNumerosDF());
 		((AbstractDocument) idLugarFTF.getDocument()).setDocumentFilter(new SoloNumerosDF());
 	}
-	
+
 	public void setAllRenderers() {
 		paisCB.setRenderer(new PaisCBRenderer());
 		regionCB.setRenderer(new RegionCBRenderer());
@@ -733,7 +730,7 @@ public class AdminEventoSearchView extends AbstractView {
 		// renderer de tabla de resultados
 		resultadosTable.setDefaultRenderer(Object.class, new EventoTableRenderer());
 	}
-	
+
 	public void setControllers() {
 		// Llenado de comboboxes con controller
 		LlenarCombosSearchController llenado = new LlenarCombosSearchController(this);
@@ -741,7 +738,7 @@ public class AdminEventoSearchView extends AbstractView {
 		// Acciones de búsqueda
 		EventoSearchController searchAction = new EventoSearchController(this);
 		buscarButton.setAction(searchAction);
-		
+
 		// Permitir búsqueda al presionar Enter en los campos de texto (KeyTyped) en campos de Texto y FormattedTextField
 		nombreTF.setAction(searchAction);
 		precioDesdeFTF.setAction(searchAction);
@@ -752,7 +749,7 @@ public class AdminEventoSearchView extends AbstractView {
 		idArtistaFTF.setAction(searchAction);
 		idOrganizadorFTF.setAction(searchAction);
 		idLugarFTF.setAction(searchAction);
-		
+
 		// Permitir búsqueda al cambiar selección en ComboBoxes
 		paisCB.addActionListener(searchAction);
 		regionCB.addActionListener(searchAction);
@@ -765,50 +762,49 @@ public class AdminEventoSearchView extends AbstractView {
 		// Permitir búsqueda al cambiar fecha en JDateChoosers
 		fechaDesdeDC.getDateEditor().addPropertyChangeListener(searchAction);
 		fechaHastaDC.getDateEditor().addPropertyChangeListener(searchAction);
-		
+
 		AbrirDetalleEMController detalleAction = new AbrirDetalleEMController(this);
 		resultadosTable.addMouseListener(detalleAction);
 	}
-	
+
 	public JTable getTable () {
 		return resultadosTable;
 	}
-	
+
 	// Metodos get para comboBoxes (utilizados en LlenarCombosController)
 	public JComboBox getEstadoCB () {
 		return estadoCB;
 	}
-	
+
 	public JComboBox getGeneroCB() {
 		return generoCB;
 	}
-	
+
 	public JComboBox getSubgeneroCB() {
 		return subgeneroCB;
 	}
-	
+
 	public JComboBox getPaisCB() {
 		return paisCB;
 	}
-	
+
 	public JComboBox getRegionCB() {
 		return regionCB;
 	}
-	
+
 	public JComboBox getCiudadCB() {
 		return ciudadCB;
 	}
-	
+
 	public JComboBox getTipoCB() {
 		return tipoEventoCB;
 	}
-	
+
 	public JComboBox getSubtipoCB() {
 		return subtipoCB;
 	}
-	
+
 	public JComboBox getZonaHorariaCB() {
 		return zonaHorariaCB;
-	} 
-	
+	}
 } // class

@@ -1,6 +1,7 @@
 package com.setlisto.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -132,7 +133,7 @@ public class OrganizadorFormView extends JDialog {
 		return passwordField;
 	}
 
-	private void addComponent(JPanel panel, String label, java.awt.Component component, int row) {
+	private void addComponent(JPanel panel, String label, Component component, int row) {
 		GridBagConstraints gbcLabel = new GridBagConstraints();
 		gbcLabel.anchor = GridBagConstraints.WEST;
 		gbcLabel.insets = new Insets(0, 0, 5, 5);

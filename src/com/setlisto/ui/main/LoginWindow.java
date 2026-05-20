@@ -127,7 +127,6 @@ public class LoginWindow extends JFrame {
 		contentPane.add(accederButton, gbc_accederButton);
 		
 		// Bloquear que se pueda cambiar el tamaño y maximizar
-
 	    this.setResizable(false);
 
 	    // Establece el tamaño exacto 
@@ -156,5 +155,10 @@ public class LoginWindow extends JFrame {
 	public boolean isRolOrganizador() {
 		return rolOrganizadorCheckBox.isSelected();
 	}
-
+	
+	public void limpiarCampos() {
+		usuarioTF.setText("");
+		contrasenaTF.setText("");
+		rolOrganizadorCheckBox.setSelected(false);
+	}
 }

@@ -41,29 +41,25 @@ public class MainWindow extends JFrame {
 	private JMenuItem editarMI;
 	private JMenuItem cerrarSesionMI;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel(new FlatDarculaLaf());
-					getInstance().setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+		/**
+		 * Launch the application.
+		 */
+		public static void main(String[] args) {
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						UIManager.setLookAndFeel(new FlatDarculaLaf());
+						getInstance().setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
-	}
-	
-	/**
-	 * Create the application.
-	 */
+			});
+		}
+
 	private MainWindow() {
 		initialize();
-		postInitialize();
-		
+		postInitialize();	
 	}
 
 	public static MainWindow getInstance () {
@@ -72,21 +68,19 @@ public class MainWindow extends JFrame {
 		}
 		return instance;
 	}
-	
-	// Para la demo activar este constructor alternativo para pasar el usuario logueado al iniciar la aplicación, si se desea
-	/*
-	 public MainWindow(Object usuarioLogueado) {
+
+	public MainWindow(Object usuarioLogueado) {
 		this.usuarioLogueado = usuarioLogueado;
 		initialize();
 		postInitialize();
 		configurarSegunRol();
-	} */
+	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		
+
 		this.setBounds(100, 100, 1100, 700);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.getContentPane().setLayout(new BorderLayout(0, 0));
@@ -94,83 +88,83 @@ public class MainWindow extends JFrame {
 		JPanel northPanel = new JPanel();
 		this.getContentPane().add(northPanel, BorderLayout.NORTH);
 		northPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		JPanel usuariosFunctionsPanel = new JPanel();
 		northPanel.add(usuariosFunctionsPanel);
 		usuariosFunctionsPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel usuariosFunctionsNorth = new JPanel();
 		usuariosFunctionsPanel.add(usuariosFunctionsNorth, BorderLayout.NORTH);
-		
+
 		JLabel usuariosLabel = new JLabel("Usuarios");
 		usuariosFunctionsNorth.add(usuariosLabel);
-		
+
 		JPanel usuariosFunctionsCenter = new JPanel();
 		usuariosFunctionsPanel.add(usuariosFunctionsCenter, BorderLayout.SOUTH);
-		
+
 		gestionUsuariosButton = new JButton("Buscar");
 		gestionUsuariosButton.setIcon(new ImageIcon(MainWindow.class.getResource("/nuvola/16x16/1312_kdmconfig_kdmconfig.png")));
 		usuariosFunctionsCenter.add(gestionUsuariosButton);
-		
+
 		JPanel eventosFunctionsPanel = new JPanel();
 		northPanel.add(eventosFunctionsPanel);
 		eventosFunctionsPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel eventosFunctionsNorth = new JPanel();
 		eventosFunctionsPanel.add(eventosFunctionsNorth, BorderLayout.NORTH);
-		
+
 		JLabel eventosLabel = new JLabel("Eventos");
 		eventosFunctionsNorth.add(eventosLabel);
-		
+
 		JPanel eventosFunctionsCenter = new JPanel();
 		eventosFunctionsPanel.add(eventosFunctionsCenter);
-		
+
 		buscarEventoButton = new JButton("Buscar");
 		buscarEventoButton.setIcon(new ImageIcon(MainWindow.class.getResource("/nuvola/16x16/1467_xmag_xmag.png")));
 		eventosFunctionsCenter.add(buscarEventoButton);
-		
+
 		crearEventoButton = new JButton("Crear");
 		crearEventoButton.setIcon(new ImageIcon(MainWindow.class.getResource("/nuvola/16x16/1875_viewmag+_viewmag+.png")));
 		eventosFunctionsCenter.add(crearEventoButton);
-		
+
 		JPanel estadisticasFunctionsPanel = new JPanel();
 		northPanel.add(estadisticasFunctionsPanel);
 		estadisticasFunctionsPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel estadisticasFunctionsNorth = new JPanel();
 		estadisticasFunctionsPanel.add(estadisticasFunctionsNorth, BorderLayout.NORTH);
-		
+
 		JLabel gestionLabel = new JLabel("Gestión");
 		estadisticasFunctionsNorth.add(gestionLabel);
-		
+
 		JPanel estadisticasFunctionsCenter = new JPanel();
 		estadisticasFunctionsPanel.add(estadisticasFunctionsCenter);
-		
+
 		reservasButton = new JButton("Reservas");
 		estadisticasFunctionsCenter.add(reservasButton);
-		
+
 		resenasButton = new JButton("Reseñas");
 		estadisticasFunctionsCenter.add(resenasButton);
-		
+
 		estadisticasButton = new JButton("Estadisticas");
 		estadisticasFunctionsCenter.add(estadisticasButton);
-		
+
 		JPanel usuarioPanel = new JPanel();
 		northPanel.add(usuarioPanel);
-		
+
 		JMenuBar perfilUsuarioMenuBar = new JMenuBar();
 		usuarioPanel.add(perfilUsuarioMenuBar);
-		
+
 		JMenu perfilUsuarioMenu = new JMenu("");
 		perfilUsuarioMenu.setIcon(new ImageIcon(MainWindow.class.getResource("/nuvola/16x16/1447_man_male_male_man_user_employee_manager_employee_operator_manager_personal_operator_administrator_administrator_personal_user.png")));
 		perfilUsuarioMenuBar.add(perfilUsuarioMenu);
-		
+
 		bienvenidaLabel = new JLabel("Hola ");
 		perfilUsuarioMenu.add(bienvenidaLabel);
-		
+
 		editarMI = new JMenuItem("Editar...");
 		perfilUsuarioMenu.add(editarMI);
-		
+
 		cerrarSesionMI = new JMenuItem("Cerrar Sesion");
 		perfilUsuarioMenu.add(cerrarSesionMI);
 
@@ -192,34 +186,35 @@ public class MainWindow extends JFrame {
 	public void addTab(AbstractView view) { 
 		tabbedPane.addTab(view.getName(), view);
 		int index = tabbedPane.getTabCount() - 1;
-	    tabbedPane.setTabComponentAt(index, new ClosableTabComponent(tabbedPane, view.getName()));
-	    tabbedPane.setSelectedIndex(index);
+		tabbedPane.setTabComponentAt(index, new ClosableTabComponent(tabbedPane, view.getName()));
+		tabbedPane.setSelectedIndex(index);
 	}
-	
+
 	public void removeTab(AbstractView view) {
-	    int index = tabbedPane.indexOfComponent(view);
-	    if (index != -1) {
-	        tabbedPane.remove(index);
-	    }
+		int index = tabbedPane.indexOfComponent(view);
+		if (index != -1) {
+			tabbedPane.remove(index);
+		}
 	}
-	
+
 	public void setUsuarioLogueado(Object usuario) {
 		this.usuarioLogueado = usuario;
 		configurarSegunRol();
 	}
-	
+
 	public Object getUsuarioLogueado() {
 		return usuarioLogueado;
 	}
+
 	
 	private void configurarSegunRol() {
-		// 1. Caso de seguridad: nadie logueado
+		// Caso de seguridad: nadie logueado
 		if (usuarioLogueado == null) {
 			bienvenidaLabel.setText("Invitado");
 			return;
 		}
 
-		// 2. Lógica por roles
+		// Lógica por roles
 		if (usuarioLogueado instanceof Organizador) {
 			Organizador org = (Organizador) usuarioLogueado;
 			bienvenidaLabel.setText("Hola, " + org.getNombre());
@@ -227,19 +222,25 @@ public class MainWindow extends JFrame {
 		else if (usuarioLogueado instanceof Cliente) {
 			Cliente cli = (Cliente) usuarioLogueado;
 			bienvenidaLabel.setText("Hola, " + cli.getNombre());
-		}
+			// Desactivamos funciones que son de Organizador
+			gestionUsuariosButton.setEnabled(false);
+			crearEventoButton.setEnabled(false);
+			reservasButton.setEnabled(false);
+			estadisticasButton.setEnabled(false);
+		}	
 	}
-	
+
 	private void setAllControllers() {
 		// Añadimos todos los controladores iniciales
-//		TODO Controllers para componentes comentados 	
 		gestionUsuariosButton.setAction(new AbrirBuscarUsuarioController());
 		buscarEventoButton.setAction(new AbrirBuscarEMController());
 		crearEventoButton.setAction(new AbrirCrearEMController());
 		reservasButton.setAction(new AbrirReservasController());
-//		resenasButton.setAction(new AbrirResenasController);
-//		estadisticasButton.setAction(new AbrirEstadisticasController);
 		cerrarSesionMI.setAction(new LogoutController());
+	}
+
+	public static void resetInstance() {
+		instance = null;
 	}
 }
 

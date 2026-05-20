@@ -1,6 +1,7 @@
 package com.setlisto.ui.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -21,11 +22,11 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import com.setlisto.model.CategoriaAsiento;
-import com.setlisto.model.EventZone;
 import com.setlisto.model.EventoMusicalDTO;
 import com.setlisto.model.TicketDTO;
-import com.setlisto.service.EventZoneService;
+import com.setlisto.model.ZonaEvento;
 import com.setlisto.service.ReservaService;
+import com.setlisto.service.ZonaEventoService;
 import com.setlisto.service.impl.EventZoneServiceImpl;
 import com.setlisto.service.impl.ReservaServiceImpl;
 import com.setlisto.ui.controller.ZonaConfigurada;
@@ -43,7 +44,7 @@ public class ReservaView extends AbstractView {
 	private JLabel zonaSeleccionadaLabel;
 	private JButton comprarButton;
 	private ZonaConfigurada zonaSeleccionada;
-	private EventZoneService eventZoneService = new EventZoneServiceImpl();
+	private ZonaEventoService eventZoneService = new EventZoneServiceImpl();
 	private ReservaService reservaService = new ReservaServiceImpl();
 
 	public ReservaView(EventoMusicalDTO evento) {
@@ -87,17 +88,17 @@ public class ReservaView extends AbstractView {
 
 	private void cargarZonas() {
 		try {
-			List<EventZone> zonas = eventZoneService.findByEventId(evento.getId());
+			List<ZonaEvento> zonas = eventZoneService.findByEventId(evento.getId());
 			List<ZonaConfigurada> configuradas = new ArrayList<ZonaConfigurada>();
-			for (EventZone zona : zonas) {
+			for (ZonaEvento zona : zonas) {
 				ZonaConfigurada zc = new ZonaConfigurada();
 				zc.setId(zona.getId());
-				zc.setSeccion(zona.getSectionName());
-				zc.setCantidad(zona.getTotalCapacity() != null ? zona.getTotalCapacity() : 0);
-				zc.setDisponibles(zona.getAvailableCapacity());
-				zc.setPrecio(zona.getBasePrice());
-				zc.setCategoria(new CategoriaAsiento(zona.getSeatCategoryId(), zona.getSeatCategoryName()));
-				zc.setArea(new Rectangle(nvl(zona.getPosX()), nvl(zona.getPosY()), nvl(zona.getWidth()), nvl(zona.getHeight())));
+				zc.setSeccion(zona.getSeccionNombre());
+				zc.setCantidad(zona.getCapacidadTotal() != null ? zona.getCapacidadTotal() : 0);
+				zc.setDisponibles(zona.getCapacidadDisponible());
+				zc.setPrecio(zona.getPrecioBase());
+				zc.setCategoria(new CategoriaAsiento(zona.getCategoriaAsientoId(), zona.getCategoriaAsientoNombre()));
+				zc.setArea(new Rectangle(nvl(zona.getPosX()), nvl(zona.getPosY()), nvl(zona.getAncho()), nvl(zona.getAlto())));
 				configuradas.add(zc);
 			}
 			mapaPanel.setZonas(configuradas);
@@ -156,7 +157,7 @@ public class ReservaView extends AbstractView {
 		}
 	}
 
-	private void addRow(JPanel panel, int y, String label, java.awt.Component component) {
+	private void addRow(JPanel panel, int y, String label, Component component) {
 		GridBagConstraints l = new GridBagConstraints();
 		l.gridx = 0;
 		l.gridy = y;

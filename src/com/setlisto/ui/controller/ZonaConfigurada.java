@@ -10,7 +10,7 @@ import com.setlisto.model.CategoriaAsiento;
 public class ZonaConfigurada {
 
 	private Rectangle area; // El dibujo en el mapa
-	private String seccion; // "A", "B", "C"...
+	private String seccion; // "1", "2", "3"
 	private CategoriaAsiento categoria; // Obtenida del CategoriaAsientoService
 	private int cantidad; // Del JSpinner	
 	private BigDecimal precio;

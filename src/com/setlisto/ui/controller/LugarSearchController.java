@@ -63,9 +63,9 @@ public class LugarSearchController extends AbstractController implements ActionL
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// 1. Verificar si es doble clic
+		// Verificar si es doble clic
 	    if (e.getClickCount() == 2) {
-	        // 2. Obtener la tabla desde la vista (necesitarás un getter en LugarSelectView)
+	        // Obtener la tabla desde la vista (necesitarás un getter en LugarSelectView)
 	        JTable tabla = view.getTabla(); 
 	        
 	        int filaSelec = tabla.getSelectedRow();

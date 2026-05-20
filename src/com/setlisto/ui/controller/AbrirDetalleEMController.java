@@ -38,7 +38,6 @@ public class AbrirDetalleEMController extends AbstractController implements Mous
                 
 				EventoMusicalDTO em = (EventoMusicalDTO) tabla.getValueAt(modelRow, 0);
 				
-                // INSTANCIAMOS UNA NUEVA VISTA, pasamos el DTO y la bloqueamos
 				EventoView eventoView = new EventoView();
 				eventoView.setModel(em);
 				eventoView.setEditable(false);						

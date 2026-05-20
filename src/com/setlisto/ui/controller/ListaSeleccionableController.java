@@ -32,7 +32,6 @@ public class ListaSeleccionableController<T> extends AbstractController implemen
 
 	@Override
 	public void doAction() {
-		// No se utiliza un botón, la acción se maneja directamente en el mouseClicked
 	}
 
 	@Override

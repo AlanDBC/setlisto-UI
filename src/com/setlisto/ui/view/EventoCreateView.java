@@ -34,7 +34,6 @@ import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
 
 import com.setlisto.model.Artista;
-import com.setlisto.model.EventZone;
 import com.setlisto.model.EventoMusicalDTO;
 import com.setlisto.model.GeneroMusical;
 import com.setlisto.model.LugarDTO;
@@ -42,6 +41,7 @@ import com.setlisto.model.Organizador;
 import com.setlisto.model.SubGeneroMusical;
 import com.setlisto.model.SubGeneroMusicalDTO;
 import com.setlisto.model.SubTipoEventoDTO;
+import com.setlisto.model.ZonaEvento;
 import com.setlisto.service.SubGeneroMusicalService;
 import com.setlisto.service.impl.SubGeneroMusicalServiceImpl;
 import com.setlisto.ui.controller.AbrirConfigPlazasController;
@@ -629,8 +629,8 @@ public class EventoCreateView extends AbstractView {
 		return em;
 	}
 
-	private List<EventZone> mapZonasToDTO() {
-		List<EventZone> zonas = new ArrayList<EventZone>();
+	private List<ZonaEvento> mapZonasToDTO() {
+		List<ZonaEvento> zonas = new ArrayList<ZonaEvento>();
 		if (zonasConfiguradas == null) {
 			return zonas;
 		}
@@ -638,42 +638,24 @@ public class EventoCreateView extends AbstractView {
 			if (zonaConfigurada == null || zonaConfigurada.getCategoria() == null || zonaConfigurada.getCategoria().getId() == null) {
 				continue;
 			}
-			EventZone zona = new EventZone();
+			ZonaEvento zona = new ZonaEvento();
 			Rectangle area = zonaConfigurada.getArea();
-			zona.setSeatCategoryId(zonaConfigurada.getCategoria().getId());
-			zona.setSectionName(zonaConfigurada.getSeccion());
-			zona.setTotalCapacity(zonaConfigurada.getCantidad());
-			zona.setAvailableCapacity(zonaConfigurada.getCantidad());
-			zona.setBasePrice(zonaConfigurada.getPrecio());
+			zona.setCategoriaAsientoId(zonaConfigurada.getCategoria().getId());
+			zona.setSeccionNombre(zonaConfigurada.getSeccion());
+			zona.setCapacidadTotal(zonaConfigurada.getCantidad());
+			zona.setCapacidadDisponible(zonaConfigurada.getCantidad());
+			zona.setPrecioBase(zonaConfigurada.getPrecio());
 			if (area != null) {
 				zona.setPosX(area.x);
 				zona.setPosY(area.y);
-				zona.setWidth(area.width);
-				zona.setHeight(area.height);
+				zona.setAncho(area.width);
+				zona.setAlto(area.height);
 			}
 			zonas.add(zona);
 		}
 		return zonas;
 	}
 
-	/**
-	 * Método auxiliar para fusionar JDateChooser y JFormattedTextField (HH : mm)
-	 */
-	private LocalDateTime combinarFechaHora(JDateChooser chooser, JFormattedTextField horaFTF) {
-		Date date = chooser.getDate();
-		if (date == null)
-			return null;
-		// 1. Convertir Date a LocalDate
-		LocalDate fecha = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		// 2. Extraer hora y minutos del texto "HH : mm"
-		// Eliminamos espacios y puntos para quedarnos con "HHmm"
-		String cleanTime = horaFTF.getText().replace(" ", "").replace(":", "");
-		int h = Integer.parseInt(cleanTime.substring(0, 2));
-		int m = Integer.parseInt(cleanTime.substring(2, 4));
-
-		// 3. Unir en LocalDateTime
-		return LocalDateTime.of(fecha, LocalTime.of(h, m));
-	}
 
 	private void setAllRenderers() {
 		organizadorCB.setRenderer(new OrganizadorCBRenderer());
@@ -716,7 +698,7 @@ public class EventoCreateView extends AbstractView {
 		configPlazasButton.setAction(new AbrirConfigPlazasController(this));
 
 	}
-	// TODO terminar validacion para todos los componentes
+
 	public boolean validarCampos() {
 		boolean valido = true;
 
@@ -757,7 +739,60 @@ public class EventoCreateView extends AbstractView {
 
 		return valido;
 	}
+	
 
+	/**
+	 * Método auxiliar para fusionar JDateChooser y JFormattedTextField (HH : mm)
+	 */
+	private LocalDateTime combinarFechaHora(JDateChooser chooser, JFormattedTextField horaFTF) {
+		Date date = chooser.getDate();
+		if (date == null)
+			return null;
+		// 1. Convertir Date a LocalDate
+		LocalDate fecha = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		// 2. Extraer hora y minutos del texto "HH : mm"
+		// Eliminamos espacios y puntos para quedarnos con "HHmm"
+		String cleanTime = horaFTF.getText().replace(" ", "").replace(":", "");
+		int h = Integer.parseInt(cleanTime.substring(0, 2));
+		int m = Integer.parseInt(cleanTime.substring(2, 4));
+
+		// 3. Unir en LocalDateTime
+		return LocalDateTime.of(fecha, LocalTime.of(h, m));
+	}
+
+	public void setLabelSeleccionado() {
+		if (lugarSeleccionado != null) {
+			lugarSeleccionadoLabel.setText(lugarSeleccionado.getNombre());
+			if (lugarSeleccionado.getZonaHorariaNombre() != null) {
+				zonaHorariaSeleccionadaLabel.setText(lugarSeleccionado.getZonaHorariaNombre());
+			} else {
+				zonaHorariaSeleccionadaLabel.setText("(zona horaria no informada)");
+			}
+		} else {
+			lugarSeleccionadoLabel.setText("(sin lugar seleccionado)");
+			zonaHorariaSeleccionadaLabel.setText("(se define al elegir lugar)");
+		}
+		lugarSeleccionadoLabel.setForeground(Color.BLACK);
+		zonaHorariaSeleccionadaLabel.setForeground(Color.BLACK);
+	}
+	
+	public void setZonasConfiguradas(List<ZonaConfigurada> zonas) {
+		this.zonasConfiguradas = zonas;
+		int totalAsientos = 0;
+		if (zonas != null) {
+			for (ZonaConfigurada zona : zonas) {
+				totalAsientos += zona.getCantidad();
+			}
+		}
+		configPlazasButton.setText("Plazas Config. (" + totalAsientos + ")");
+		asientosConfiguradosLabel.setText(totalAsientos > 0 ? totalAsientos + " plazas configuradas" : "(sin configurar)");
+		asientosConfiguradosLabel.setForeground(Color.BLACK);
+		
+		if (totalAsientos > 0) {
+		    capacidadTF.setText(String.valueOf(totalAsientos));
+		}
+	}
+	
 	public JComboBox getTipoCB() {
 		return tipoCB;
 	}
@@ -777,22 +812,6 @@ public class EventoCreateView extends AbstractView {
 	public void setLugarSeleccionado(LugarDTO lugar) {
 		this.lugarSeleccionado = lugar;
 		setLabelSeleccionado();
-	}
-
-	public void setLabelSeleccionado() {
-		if (lugarSeleccionado != null) {
-			lugarSeleccionadoLabel.setText(lugarSeleccionado.getNombre());
-			if (lugarSeleccionado.getZonaHorariaNombre() != null) {
-				zonaHorariaSeleccionadaLabel.setText(lugarSeleccionado.getZonaHorariaNombre());
-			} else {
-				zonaHorariaSeleccionadaLabel.setText("(zona horaria no informada)");
-			}
-		} else {
-			lugarSeleccionadoLabel.setText("(sin lugar seleccionado)");
-			zonaHorariaSeleccionadaLabel.setText("(se define al elegir lugar)");
-		}
-		lugarSeleccionadoLabel.setForeground(Color.BLACK);
-		zonaHorariaSeleccionadaLabel.setForeground(Color.BLACK);
 	}
 
 	public LugarDTO getLugarSeleccionado() {
@@ -824,23 +843,6 @@ public class EventoCreateView extends AbstractView {
 
 	public ListSeleccionableModel<Artista> getArtistasModel() {
 		return artistasModel;
-	}
-
-	public void setZonasConfiguradas(List<ZonaConfigurada> zonas) {
-		this.zonasConfiguradas = zonas;
-		int totalAsientos = 0;
-		if (zonas != null) {
-			for (ZonaConfigurada zona : zonas) {
-				totalAsientos += zona.getCantidad();
-			}
-		}
-		configPlazasButton.setText("Plazas Config. (" + totalAsientos + ")");
-		asientosConfiguradosLabel.setText(totalAsientos > 0 ? totalAsientos + " plazas configuradas" : "(sin configurar)");
-		asientosConfiguradosLabel.setForeground(Color.BLACK);
-		
-		if (totalAsientos > 0) {
-		    capacidadTF.setText(String.valueOf(totalAsientos));
-		}
 	}
 
 	public List<ZonaConfigurada> getZonasConfiguradas() {

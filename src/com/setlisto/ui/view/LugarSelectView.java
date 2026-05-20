@@ -369,9 +369,6 @@ public class LugarSelectView extends JDialog {
 		direccionTF.setAction(searchController);
 		
 		resultadosTable.addMouseListener(searchController);
-		
-		 
-
 	}
 
 	public void limpiarCampos () {

@@ -26,13 +26,14 @@ public class LogoutController extends AbstractController implements ActionListen
 	            "¿Deseas cerrar la sesión actual?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION);
 
 	    if (respuesta == JOptionPane.YES_OPTION) {
-	        // Destruimos la MainWindow (se libera la memoria)
-	    	MainWindow.getInstance().dispose();
-
-	        // Creamos una INSTANCIA NUEVA de LoginWindow
-	        // Como el constructor ya tiene initialize() y postInitialize(), 
-	        // nace lista para usarse.
-	        LoginWindow login = new LoginWindow();
+	      
+	        MainWindow.getInstance().dispose();
+	        
+	        MainWindow.resetInstance(); 
+	        
+	        // Reutilizamos el Singleton de LoginWindow, lo limpiamos y lo mostramos
+	        LoginWindow login = LoginWindow.getInstance();
+	        login.limpiarCampos();
 	        login.setVisible(true);
 	    }
 	}
@@ -41,7 +42,4 @@ public class LogoutController extends AbstractController implements ActionListen
 	public void actionPerformed(ActionEvent e) {
 		doAction();
 	}
-	
-	
-
 }
